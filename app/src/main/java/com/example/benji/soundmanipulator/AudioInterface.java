@@ -3,15 +3,20 @@ package com.example.benji.soundmanipulator;
 
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AudioInterface extends Thread {
-    private PCMStream stream;
+public class AudioInterface implements Runnable {
+    private ConcurrentLinkedQueue<short[]> stream;
     private AudioTrack track;
     private boolean isActive;
 
-    AudioInterface(PCMStream input) {
+    AudioInterface(ConcurrentLinkedQueue<short[]> input) {
         WaveSpecs spec = new WaveSpecs();
         this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
                 spec.getChannels(), spec.getFormat(),
@@ -24,21 +29,18 @@ public class AudioInterface extends Thread {
         isActive = true;
         track.play();
         while(isActive) {
-            if (!stream.empty()) {
-                track.write(stream.out(), 0, 1);
+            short[] data = stream.poll();
+            if (data == null) {
             }
+            else {
+                track.write(data, 0, data.length);
+            }
+
         }
     }
 
     public void off() {
         isActive = false;
-    }
-
-    public void in(short[] input) throws IOException {
-        if (!isActive) {
-            throw new IOException();
-        }
-        stream.in(input);
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static android.widget.SeekBar.*;
 
@@ -34,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     Button playSaw;
     Button stopSine;
     Button stopSaw;
-    MediaPlayer music;
     Switch slow_swh;
     AudioTrack audio;
     SeekBar saw_freq_bar;
@@ -60,16 +60,19 @@ public class MainActivity extends AppCompatActivity {
         stopSine = (Button) this.findViewById(R.id.stop_sine);
         playSaw = (Button) this.findViewById(R.id.play_saw);
         stopSaw = (Button) this.findViewById(R.id.stop_saw);
-        music = MediaPlayer.create(this, R.raw.test_beat);
+
         playSine.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PCMStream cable = new PCMStream();
-                        //output = new AudioInterface(cable);
-                        //output.start();
+                        ConcurrentLinkedQueue<short[]> cable = new ConcurrentLinkedQueue<>();
+                        output = new AudioInterface(cable);
+                        Thread test = new Thread(output);
+                        test.start();
+
                         osc = new Oscillator(sine_freq_bar, WAVETYPE.SINE, cable);
-                        osc.start();
+                        Thread test2 = new Thread(osc);
+                        test2.start();
                     }
                 }
         );
@@ -77,8 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        osc.end();
-                        //output.off();
+
                     }
                 }
         );
@@ -86,11 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PCMStream cable = new PCMStream();
-                        output = new AudioInterface(cable);
-                        output.start();
-                        osc = new Oscillator(saw_freq_bar, WAVETYPE.SAW, cable);
-                        osc.start();
+
                     }
                 }
         );
@@ -98,8 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        osc.end();
-                        output.off();
+
                     }
                 }
         );
