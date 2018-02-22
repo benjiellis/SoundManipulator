@@ -31,35 +31,26 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CHARSET = "ASCII";
 
-    Button playSine;
-    Button playSaw;
-    Button stopSine;
-    Button stopSaw;
-    Switch slow_swh;
-    AudioTrack audio;
-    SeekBar saw_freq_bar;
-    SeekBar sine_freq_bar;
-    int freq;
     Oscillator osc;
     AudioInterface output;
-
-    // DO TO
-    // GET AUDIOTRACK TO RETURN AUDIO IN MAIN APP
-    // FIGURE OUT WHAT MINBUFFERSIZE SHOULD BE AND SET IT
-    // PERHAPS TRY TO GET PLAY BUTTON TO PLAY BLANK SINE TONE FIRST
+    SeekBar sine_freq_bar;
+    Button playSine;
+    Button stopSine;
+    Switch mixerSwitch;
+    Switch waveTypeSwitch;
+    SeekBar volumeBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        sine_freq_bar = (SeekBar) this.findViewById(R.id.sine_freq_bar);
-        saw_freq_bar = (SeekBar) this.findViewById(R.id.saw_seek_bar);
+        setContentView(R.layout.activity_main); // v importante
 
         playSine = (Button) this.findViewById(R.id.play_sine);
         stopSine = (Button) this.findViewById(R.id.stop_sine);
-        playSaw = (Button) this.findViewById(R.id.play_saw);
-        stopSaw = (Button) this.findViewById(R.id.stop_saw);
+        sine_freq_bar = (SeekBar) this.findViewById(R.id.sine_freq_bar);
+        mixerSwitch = (Switch) this.findViewById(R.id.mixer_switch);
+        waveTypeSwitch = (Switch) this.findViewById(R.id.wavetype_switch);
+        volumeBar = (SeekBar) this.findViewById(R.id.volume_seek_bar);
 
         playSine.setOnClickListener(
                 new View.OnClickListener() {
@@ -73,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
                         osc = new Oscillator(sine_freq_bar, WAVETYPE.SINE, cable);
                         Thread test2 = new Thread(osc);
                         test2.start();
+                        Log.d("FINISH", "playSine OnClick complete");
                     }
                 }
         );
@@ -84,26 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-        playSaw.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
 
-                    }
-                }
-        );
-        stopSaw.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+    } // end OnCreate
 
-                    }
-                }
-        );
-
-        slow_swh = (Switch) this.findViewById(R.id.slow_switch);
-    }
-
-        /* ... */
-
-}
+} // end class MainActivity

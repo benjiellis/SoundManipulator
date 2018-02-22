@@ -79,7 +79,6 @@ public class Oscillator implements Runnable {
                 short[] mBuffer = sawCalc(freq, currentAmp, i);
                 // track.write(mBuffer, 0 ,1);
                 boolean success = output.add(mBuffer);
-                if (success) { Log.d("PUSH", "Added one byte"); }
                 i++;
             }
         }
