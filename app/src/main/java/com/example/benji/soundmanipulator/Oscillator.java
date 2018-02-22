@@ -12,11 +12,15 @@ import android.widget.SeekBar;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+
 enum WAVETYPE {
     SINE, SAW, SQUARE
 }
 
 public class Oscillator implements Runnable {
+
+    private final int BUFFER_SIZE = 2096;
+
     AudioTrack track;
     SeekBar freqBar;
     WAVETYPE type;
@@ -37,15 +41,21 @@ public class Oscillator implements Runnable {
         isActive = false;
     }
 
-    short[] sineCalc(int freq, double[] currentAngle) {
+    short sineCalc(int freq, double[] currentAngle) {
         double angleIncrement = (2.0 * Math.PI) * freq / 44100;
         currentAngle[0] += angleIncrement;
         currentAngle[0] = currentAngle[0] % (2.0 * Math.PI);
         double b = Math.sin(currentAngle[0]);
         short s = (short) (b * Short.MAX_VALUE);
-        short[] mBuffer = new short[1];
-        mBuffer[0] = s;
-        return mBuffer;
+        return s;
+    }
+
+    short[] getSineBuffer(double[] currentAngle) {
+        short[] buffer = new short[BUFFER_SIZE];
+        for (int i = 0; i < BUFFER_SIZE; i++) {
+            buffer[i] = sineCalc(freqBar.getProgress(), currentAngle);
+        }
+        return buffer;
     }
 
     short[] sawCalc(int freq, double[] currentAmp, int i) {
@@ -65,12 +75,14 @@ public class Oscillator implements Runnable {
         track.play();
         int i = 0;
         if (this.type == WAVETYPE.SINE) {
-            double[] currentAngle = {0};
             while (isActive) {
-                int freq = freqBar.getProgress();
-                short[] mBuffer = sineCalc(freq, currentAngle);
-                // track.write(mBuffer, 0 ,1);
-                output.offer(mBuffer);
+                double[] currentAngle = {0};
+                if (output.isEmpty()) {
+                    short[] buffer = getSineBuffer(currentAngle);
+                    output.offer(buffer);
+                }
+
+                //
             }
         } else if (this.type == WAVETYPE.SAW) {
             double[] currentAmp = {0};

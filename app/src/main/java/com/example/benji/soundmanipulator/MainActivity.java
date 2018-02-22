@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     Switch waveTypeSwitch;
     SeekBar volumeBar;
 
+    Thread oscThread;
+    Thread ampThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         ConcurrentLinkedQueue<short[]> cable = new ConcurrentLinkedQueue<>();
                         output = new AudioInterface(cable);
-                        Thread test = new Thread(output);
-                        test.start();
+                        ampThread = new Thread(output);
+                        ampThread.start();
 
                         osc = new Oscillator(sine_freq_bar, WAVETYPE.SINE, cable);
-                        Thread test2 = new Thread(osc);
-                        test2.start();
+                        oscThread = new Thread(osc);
+                        oscThread.start();
                         Log.d("FINISH", "playSine OnClick complete");
                     }
                 }
@@ -72,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        output.off();
+                        osc.end();
                     }
                 }
         );
