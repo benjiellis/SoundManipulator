@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AudioInterface implements Runnable {
-    private ConcurrentLinkedQueue<short[]> stream;
+    private ConcurrentLinkedQueue<short[]> input;
     private AudioTrack track;
     private boolean isActive;
 
@@ -22,14 +22,18 @@ public class AudioInterface implements Runnable {
                 spec.getChannels(), spec.getFormat(),
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
         this.isActive = false;
-        this.stream = input;
+        this.input = input;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     public void on() {
         isActive = true;
         track.play();
         while(isActive) {
-            short[] data = stream.poll();
+            short[] data = input.poll();
             if (data == null) {
             }
             else {

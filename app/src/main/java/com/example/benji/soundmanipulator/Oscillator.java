@@ -19,16 +19,19 @@ enum WAVETYPE {
 
 public class Oscillator implements Runnable {
 
-    private final int BUFFER_SIZE = 2096;
+    private int BUFFER_SIZE;
+    private int SAMPLE_RATE;
 
     AudioTrack track;
     SeekBar freqBar;
     WAVETYPE type;
-    boolean isActive = true;
+    private boolean isActive = true;
     ConcurrentLinkedQueue<short[]> output;
 
     Oscillator(SeekBar bar, WAVETYPE type, ConcurrentLinkedQueue<short[]> output) {
         WaveSpecs spec = new WaveSpecs();
+        this.BUFFER_SIZE = spec.getMinimumBufferSize();
+        this.SAMPLE_RATE = spec.getRate();
         this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
                 spec.getChannels(), spec.getFormat(),
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
@@ -37,25 +40,45 @@ public class Oscillator implements Runnable {
         this.output = output;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
     public void end() {
         isActive = false;
     }
 
-    short sineCalc(int freq, double[] currentAngle) {
-        double angleIncrement = (2.0 * Math.PI) * freq / 44100;
-        currentAngle[0] += angleIncrement;
-        currentAngle[0] = currentAngle[0] % (2.0 * Math.PI);
-        double b = Math.sin(currentAngle[0]);
-        short s = (short) (b * Short.MAX_VALUE);
-        return s;
+    short sineCalc(MutableDouble currentAngle) {
+        double angleIncrement = (2.0 * Math.PI) * freqBar.getProgress() / SAMPLE_RATE;
+        currentAngle.setValue(currentAngle.getValue() + angleIncrement);
+        currentAngle.setValue(currentAngle.getValue() % (2 * Math.PI));
+        double b = Math.sin(currentAngle.getValue());
+        return (short) (b * Short.MAX_VALUE);
     }
 
-    short[] getSineBuffer(double[] currentAngle) {
-        short[] buffer = new short[BUFFER_SIZE];
-        for (int i = 0; i < BUFFER_SIZE; i++) {
-            buffer[i] = sineCalc(freqBar.getProgress(), currentAngle);
+    short[] getSineBuffer(MutableDouble currentAngle) {
+        int bufferSize = AudioTrack.getMinBufferSize(44100,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        bufferSize *= 2;
+        short[] buffer = new short[bufferSize];
+        for (int i = 0; i < bufferSize; i++) {
+            buffer[i] = sineCalc(currentAngle);
         }
         return buffer;
+    }
+
+    void on() {
+        isActive = true;
+        track.play();
+        if (this.type == WAVETYPE.SINE) {
+            while (isActive) {
+                if (output.isEmpty()) {
+                    MutableDouble currentAngle = new MutableDouble(0);
+                    short[] buffer = getSineBuffer(currentAngle);
+                    output.offer(buffer);
+                }
+            }
+        }
     }
 
     short[] sawCalc(int freq, double[] currentAmp, int i) {
@@ -70,34 +93,25 @@ public class Oscillator implements Runnable {
         return mBuffer;
     }
 
-    void on() {
-        isActive = true;
-        track.play();
-        int i = 0;
-        if (this.type == WAVETYPE.SINE) {
-            while (isActive) {
-                double[] currentAngle = {0};
-                if (output.isEmpty()) {
-                    short[] buffer = getSineBuffer(currentAngle);
-                    output.offer(buffer);
-                }
-
-                //
-            }
-        } else if (this.type == WAVETYPE.SAW) {
-            double[] currentAmp = {0};
-            while (isActive) {
-                int freq = freqBar.getProgress();
-                short[] mBuffer = sawCalc(freq, currentAmp, i);
-                // track.write(mBuffer, 0 ,1);
-                boolean success = output.add(mBuffer);
-                i++;
-            }
-        }
-    }
-
     @Override
     public void run() {
         this.on();
+    }
+}
+
+class MutableDouble {
+
+    private double value;
+
+    public MutableDouble(double value) {
+        this.value = value;
+    }
+
+    public double getValue() {
+        return this.value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -32,10 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String CHARSET = "ASCII";
 
     Oscillator osc;
-    AudioInterface output;
+    AudioInterface amp;
     SeekBar sine_freq_bar;
-    Button playSine;
-    Button stopSine;
+    Switch oscSwitch;
     Switch mixerSwitch;
     Switch waveTypeSwitch;
     SeekBar volumeBar;
@@ -43,43 +43,54 @@ public class MainActivity extends AppCompatActivity {
     Thread oscThread;
     Thread ampThread;
 
+    ConcurrentLinkedQueue<short[]> cable = new ConcurrentLinkedQueue<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // v importante
 
-        playSine = (Button) this.findViewById(R.id.play_sine);
-        stopSine = (Button) this.findViewById(R.id.stop_sine);
+        oscSwitch = (Switch) this.findViewById(R.id.osc_switch);
         sine_freq_bar = (SeekBar) this.findViewById(R.id.sine_freq_bar);
         mixerSwitch = (Switch) this.findViewById(R.id.mixer_switch);
         waveTypeSwitch = (Switch) this.findViewById(R.id.wavetype_switch);
         volumeBar = (SeekBar) this.findViewById(R.id.volume_seek_bar);
 
-        playSine.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ConcurrentLinkedQueue<short[]> cable = new ConcurrentLinkedQueue<>();
-                        output = new AudioInterface(cable);
-                        ampThread = new Thread(output);
-                        ampThread.start();
+        mixerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
 
-                        osc = new Oscillator(sine_freq_bar, WAVETYPE.SINE, cable);
-                        oscThread = new Thread(osc);
-                        oscThread.start();
-                        Log.d("FINISH", "playSine OnClick complete");
-                    }
+                if (mixerSwitch.isChecked()) {
+                    amp = new AudioInterface(cable);
+                    ampThread = new Thread(amp);
+                    ampThread.start();
                 }
-        );
-        stopSine.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        output.off();
-                        osc.end();
-                    }
+                else {
+                    amp.off();
                 }
-        );
+
+            }
+        });
+
+        oscSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
+
+                if (oscSwitch.isChecked()) {
+                    osc = new Oscillator(sine_freq_bar, WAVETYPE.SINE, cable);
+                    oscThread = new Thread(osc);
+                    oscThread.start();
+                }
+                else {
+                    osc.end();
+                }
+
+            }
+        });
+
+
 
     } // end OnCreate
 
