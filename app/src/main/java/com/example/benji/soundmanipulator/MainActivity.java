@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 // true if the switch is in the On position
 
                 if (mixerSwitch.isChecked()) {
-                    amp = new AudioInterface(cable);
+                    amp = new AudioInterface(volumeBar, cable);
                     ampThread = new Thread(amp);
                     ampThread.start();
                 }
