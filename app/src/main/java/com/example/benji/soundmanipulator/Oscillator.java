@@ -26,9 +26,9 @@ public class Oscillator implements Runnable {
     SeekBar freqBar;
     WAVETYPE type;
     private boolean isActive = true;
-    ConcurrentLinkedQueue<short[]> output;
+    ConcurrentLinkedQueue<double[]> output;
 
-    Oscillator(SeekBar bar, WAVETYPE type, ConcurrentLinkedQueue<short[]> output) {
+    Oscillator(SeekBar bar, WAVETYPE type, ConcurrentLinkedQueue<double[]> output) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
@@ -48,19 +48,18 @@ public class Oscillator implements Runnable {
         isActive = false;
     }
 
-    short sineCalc(MutableDouble currentAngle) {
+    private double sineCalc(MutableDouble currentAngle) {
         double angleIncrement = (2.0 * Math.PI) * freqBar.getProgress() / SAMPLE_RATE;
         currentAngle.setValue(currentAngle.getValue() + angleIncrement);
         currentAngle.setValue(currentAngle.getValue() % (2 * Math.PI));
-        double b = Math.sin(currentAngle.getValue());
-        return (short) (b * Short.MAX_VALUE);
+        return Math.sin(currentAngle.getValue());
     }
 
-    short[] getSineBuffer(MutableDouble currentAngle) {
+    private double[] getSineBuffer(MutableDouble currentAngle) {
         int bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         //bufferSize *= 2;
-        short[] buffer = new short[bufferSize];
+        double[] buffer = new double[bufferSize];
         for (int i = 0; i < bufferSize; i++) {
             buffer[i] = sineCalc(currentAngle);
         }

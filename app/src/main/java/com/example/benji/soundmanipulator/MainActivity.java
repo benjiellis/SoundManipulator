@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
     Thread osc2Thread;
     Thread ampThread;
 
-    ConcurrentLinkedQueue<short[]> osc1Cable = new ConcurrentLinkedQueue<>();
-    ConcurrentLinkedQueue<short[]> osc2Cable = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<double[]> osc1Cable = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<double[]> osc2Cable = new ConcurrentLinkedQueue<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 // true if the switch is in the On position
 
                 if (mixerSwitch.isChecked()) {
-                    amp = new AudioInterface(volumeBar, osc1Cable);
+                    amp = new AudioInterface(volumeBar, osc1Cable, osc2Cable);
                     ampThread = new Thread(amp);
                     ampThread.start();
                 }
