@@ -57,9 +57,9 @@ public class Oscillator implements Runnable {
     }
 
     short[] getSineBuffer(MutableDouble currentAngle) {
-        int bufferSize = AudioTrack.getMinBufferSize(44100,
+        int bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        bufferSize *= 2;
+        //bufferSize *= 2;
         short[] buffer = new short[bufferSize];
         for (int i = 0; i < bufferSize; i++) {
             buffer[i] = sineCalc(currentAngle);
@@ -70,12 +70,12 @@ public class Oscillator implements Runnable {
     void on() {
         isActive = true;
         track.play();
+        MutableDouble currentAngle = new MutableDouble(0);
         if (this.type == WAVETYPE.SINE) {
             while (isActive) {
                 if (output.isEmpty()) {
-                    MutableDouble currentAngle = new MutableDouble(0);
-                    short[] buffer = getSineBuffer(currentAngle);
-                    output.offer(buffer);
+                    //short[] buffer = getSineBuffer(currentAngle);
+                    output.offer(getSineBuffer(currentAngle));
                 }
             }
         }

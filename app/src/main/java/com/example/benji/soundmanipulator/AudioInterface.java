@@ -1,6 +1,7 @@
 package com.example.benji.soundmanipulator;
 
 
+import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Handler;
@@ -17,12 +18,15 @@ public class AudioInterface implements Runnable {
     private AudioTrack track;
     private boolean isActive;
     private SeekBar volumeBar;
+    private int bufferSize;
 
     AudioInterface(SeekBar volumeBar, ConcurrentLinkedQueue<short[]> input) {
         WaveSpecs spec = new WaveSpecs();
         this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
                 spec.getChannels(), spec.getFormat(),
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
+        this.bufferSize = AudioTrack.getMinBufferSize(22050,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         this.isActive = false;
         this.input = input;
         this.volumeBar = volumeBar;
@@ -47,6 +51,7 @@ public class AudioInterface implements Runnable {
                     track.write(buffer, 0, buffer.length);
                 }
             }
+            //track.write(input.poll(), 0, bufferSize);
 
         }
     }
