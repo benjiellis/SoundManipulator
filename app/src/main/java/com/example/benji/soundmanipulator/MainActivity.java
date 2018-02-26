@@ -32,28 +32,37 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CHARSET = "ASCII";
 
-    Oscillator osc;
+    Oscillator osc1;
+    Oscillator osc2;
     AudioInterface amp;
-    SeekBar sine_freq_bar;
-    Switch oscSwitch;
+    SeekBar osc1_freqBar;
+    SeekBar osc2_freqBar;
+    Switch osc1_powerSwitch;
+    Switch osc2_powerSwitch;
     Switch mixerSwitch;
-    Switch waveTypeSwitch;
+    Switch osc1_waveTypeSwitch;
+    Switch osc2_waveTypeSwitch;
     SeekBar volumeBar;
 
-    Thread oscThread;
+    Thread osc1Thread;
+    Thread osc2Thread;
     Thread ampThread;
 
-    ConcurrentLinkedQueue<short[]> cable = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<short[]> osc1Cable = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<short[]> osc2Cable = new ConcurrentLinkedQueue<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // v importante
 
-        oscSwitch = (Switch) this.findViewById(R.id.osc_switch);
-        sine_freq_bar = (SeekBar) this.findViewById(R.id.sine_freq_bar);
+        osc1_powerSwitch = (Switch) this.findViewById(R.id.osc_switch);
+        osc2_powerSwitch = (Switch) this.findViewById(R.id.osc2_switch);
+        osc2_freqBar = (SeekBar) this.findViewById(R.id.osc2_freq_bar);
+        osc1_freqBar = (SeekBar) this.findViewById(R.id.sine_freq_bar);
         mixerSwitch = (Switch) this.findViewById(R.id.mixer_switch);
-        waveTypeSwitch = (Switch) this.findViewById(R.id.wavetype_switch);
+        osc2_waveTypeSwitch = (Switch) this.findViewById(R.id.osc2_wavetype_switch);
+        osc1_waveTypeSwitch = (Switch) this.findViewById(R.id.wavetype_switch);
         volumeBar = (SeekBar) this.findViewById(R.id.volume_seek_bar);
 
         mixerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 // true if the switch is in the On position
 
                 if (mixerSwitch.isChecked()) {
-                    amp = new AudioInterface(volumeBar, cable);
+                    amp = new AudioInterface(volumeBar, osc1Cable);
                     ampThread = new Thread(amp);
                     ampThread.start();
                 }
@@ -73,23 +82,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        oscSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        osc1_powerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // do something, the isChecked will be
                 // true if the switch is in the On position
 
-                if (oscSwitch.isChecked()) {
-                    osc = new Oscillator(sine_freq_bar, WAVETYPE.SINE, cable);
-                    oscThread = new Thread(osc);
-                    oscThread.start();
+                if (osc1_powerSwitch.isChecked()) {
+                    osc1 = new Oscillator(osc1_freqBar, WAVETYPE.SINE, osc1Cable);
+                    osc1Thread = new Thread(osc1);
+                    osc1Thread.start();
                 }
                 else {
-                    osc.end();
+                    osc1.end();
                 }
 
             }
         });
 
+        osc2_powerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (osc2_powerSwitch.isChecked()) {
+                    osc2 = new Oscillator(osc2_freqBar, WAVETYPE.SINE, osc2Cable);
+                    osc2Thread = new Thread(osc2);
+                    osc2Thread.start();
+                }
+                else {
+                    osc2.end();
+                }
+
+            }
+        });
 
 
     } // end OnCreate
