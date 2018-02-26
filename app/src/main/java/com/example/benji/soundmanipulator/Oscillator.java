@@ -27,8 +27,9 @@ public class Oscillator implements Runnable {
     WAVETYPE type;
     private boolean isActive = true;
     ConcurrentLinkedQueue<double[]> output;
+    ConcurrentLinkedQueue<double[]> fmMod;
 
-    Oscillator(SeekBar bar, WAVETYPE type, ConcurrentLinkedQueue<double[]> output) {
+    Oscillator(SeekBar bar, WAVETYPE type, ConcurrentLinkedQueue<double[]> output, ConcurrentLinkedQueue<double[]> fmInput) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
@@ -38,6 +39,7 @@ public class Oscillator implements Runnable {
         this.freqBar = bar;
         this.type = type;
         this.output = output;
+        this.fmMod = fmInput;
     }
 
     public boolean isActive() {
@@ -48,8 +50,8 @@ public class Oscillator implements Runnable {
         isActive = false;
     }
 
-    private double sineCalc(MutableDouble currentAngle) {
-        double angleIncrement = (2.0 * Math.PI) * freqBar.getProgress() / SAMPLE_RATE;
+    private double sineCalc(MutableDouble currentAngle, double fm) {
+        double angleIncrement = (2.0 * Math.PI) * (freqBar.getProgress()+(fm*500)) / SAMPLE_RATE;
         currentAngle.setValue(currentAngle.getValue() + angleIncrement);
         currentAngle.setValue(currentAngle.getValue() % (2 * Math.PI));
         return Math.sin(currentAngle.getValue());
@@ -59,9 +61,12 @@ public class Oscillator implements Runnable {
         int bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         //bufferSize *= 2;
+        double[] fmBuffer = fmMod.poll();
+        if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
         double[] buffer = new double[bufferSize];
         for (int i = 0; i < bufferSize; i++) {
-            buffer[i] = sineCalc(currentAngle);
+            //Log.d("VALUE", String.valueOf(fmBuffer[i]));
+            buffer[i] = sineCalc(currentAngle, fmBuffer[i]);
         }
         return buffer;
     }

@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     ConcurrentLinkedQueue<double[]> osc1Cable = new ConcurrentLinkedQueue<>();
     ConcurrentLinkedQueue<double[]> osc2Cable = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<double[]> spareCable = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<double[]> spareCable2 = new ConcurrentLinkedQueue<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 // true if the switch is in the On position
 
                 if (mixerSwitch.isChecked()) {
-                    amp = new AudioInterface(volumeBar, osc1Cable, osc2Cable);
+                    amp = new AudioInterface(volumeBar, osc1Cable, spareCable);
                     ampThread = new Thread(amp);
                     ampThread.start();
                 }
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 // true if the switch is in the On position
 
                 if (osc1_powerSwitch.isChecked()) {
-                    osc1 = new Oscillator(osc1_freqBar, WAVETYPE.SINE, osc1Cable);
+                    osc1 = new Oscillator(osc1_freqBar, WAVETYPE.SINE, osc1Cable, osc2Cable);
                     osc1Thread = new Thread(osc1);
                     osc1Thread.start();
                 }
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (osc2_powerSwitch.isChecked()) {
-                    osc2 = new Oscillator(osc2_freqBar, WAVETYPE.SINE, osc2Cable);
+                    osc2 = new Oscillator(osc2_freqBar, WAVETYPE.SINE, osc2Cable, spareCable2);
                     osc2Thread = new Thread(osc2);
                     osc2Thread.start();
                 }
