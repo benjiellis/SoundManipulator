@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
         fmSwitch = (Switch) this.findViewById(R.id.fm_switch);
 
         amp = new AudioInterface(volumeBar);
-        osc1 = new Oscillator(osc1_freqBar);
-        osc2 = new Oscillator(osc2_freqBar);
+        osc1 = new Oscillator(osc1_freqBar, osc1_volumeBar);
+        osc2 = new Oscillator(osc2_freqBar, osc2_volumeBar);
 
         amp.setInput1(osc1Cable);
         osc1.setOutputCable(osc1Cable);

@@ -22,14 +22,16 @@ public class Oscillator implements Runnable {
     private int BUFFER_SIZE;
     private int SAMPLE_RATE;
 
-    AudioTrack track;
-    SeekBar freqBar;
-    WAVETYPE type;
+    private AudioTrack track;
+    private SeekBar freqBar;
+    private SeekBar volBar;
+    private WAVETYPE type;
     private boolean isActive = true;
 //    ConcurrentLinkedQueue<double[]> output;
 //    ConcurrentLinkedQueue<double[]> fmMod;
-    Cable output;
-    Cable fmMod;
+    private Cable output;
+    private Cable fmMod;
+    private Cable volMod;
 
     public void setOutputCable(Cable out) {
         if (out.isInputTaken()) {
@@ -57,30 +59,47 @@ public class Oscillator implements Runnable {
         this.output = new Cable();
     }
 
-    Oscillator(SeekBar bar, WAVETYPE type, Cable output, Cable fmInput) {
+    public void setVolModCable(Cable in) {
+        if (in.isOutputTaken()) {
+            Log.d("AV", "Cable already has output assigned");
+            return;
+        }
+        this.volMod = in;
+    }
+
+    public void setVolModCable() {
+        this.volMod.setOutputTaken(false);
+        this.volMod = new Cable();
+    }
+
+    Oscillator(SeekBar freqBar, SeekBar volBar, WAVETYPE type, Cable output, Cable fmInput, Cable volMod) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
         this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
                 spec.getChannels(), spec.getFormat(),
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
-        this.freqBar = bar;
+        this.freqBar = freqBar;
+        this.volBar = volBar;
         this.type = type;
         this.output = output;
         this.fmMod = fmInput;
+        this.volMod = volMod;
     }
 
-    Oscillator(SeekBar bar) {
+    Oscillator(SeekBar freqBar, SeekBar volBar) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
         this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
                 spec.getChannels(), spec.getFormat(),
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
-        this.freqBar = bar;
+        this.freqBar = freqBar;
+        this.volBar = volBar;
         this.type = WAVETYPE.SINE;
         this.output = new Cable();
         this.fmMod = new Cable();
+        this.volMod = new Cable();
     }
 
     public boolean isActive() {
@@ -105,9 +124,10 @@ public class Oscillator implements Runnable {
         double[] fmBuffer = fmMod.getBuffer().poll();
         if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
         double[] buffer = new double[bufferSize];
+        double volume = volBar.getProgress() / 100.0;
         for (int i = 0; i < bufferSize; i++) {
             //Log.d("VALUE", String.valueOf(fmBuffer[i]));
-            buffer[i] = sineCalc(currentAngle, fmBuffer[i]);
+            buffer[i] = sineCalc(currentAngle, fmBuffer[i]) * volume;
         }
         return buffer;
     }
