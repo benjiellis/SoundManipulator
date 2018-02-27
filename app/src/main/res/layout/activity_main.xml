@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.example.benji.soundmanipulator.MainActivity">
 
-    <SeekBar
-        android:id="@+id/sine_freq_bar"
-        android:layout_width="205dp"
-        android:layout_height="23dp"
-        android:layout_marginBottom="472dp"
-        android:layout_marginLeft="124dp"
-        android:max="2000"
-        android:progress="440"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
     <Switch
         android:id="@+id/mixer_switch"
         android:layout_width="84dp"
@@ -26,16 +15,6 @@
         android:text="Mixer"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/freq_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Frequency"
-        android:layout_marginLeft="126dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="39dp" />
 
     <SeekBar
         android:id="@+id/volume_seek_bar"
@@ -57,67 +36,303 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Switch
-        android:id="@+id/wavetype_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="220dp"
-        android:layout_marginTop="56dp"
-        android:text="Wavetype  "
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="385dp"
+        android:layout_height="132dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Switch
-        android:id="@+id/osc_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Oscilator   "
+        <Switch
+            android:id="@+id/osc1_power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Power "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Switch
+            android:id="@+id/osc1_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Type "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/osc1_power" />
+
+        <SeekBar
+            android:id="@+id/osc1_volume"
+            android:layout_width="278dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            app:layout_constraintStart_toEndOf="@+id/osc1_power"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SeekBar
+            android:id="@+id/osc1_freq"
+            android:layout_width="278dp"
+            android:layout_height="19dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:max="2000"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc1_type"
+            app:layout_constraintTop_toBottomOf="@+id/osc1_volume" />
+
+        <Button
+            android:id="@+id/osc1_output"
+            android:layout_width="34dp"
+            android:layout_height="37dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="O"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/osc1_type" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="35dp"
+            android:layout_height="39dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="F"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc1_output"
+            app:layout_constraintTop_toBottomOf="@+id/osc1_type" />
+
+        <SeekBar
+            android:id="@+id/osc1_fmmod"
+            android:layout_width="117dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toEndOf="@+id/button2"
+            app:layout_constraintTop_toBottomOf="@+id/osc1_freq" />
+
+        <SeekBar
+            android:id="@+id/osc1_volmod"
+            android:layout_width="132dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc1_fmmod"
+            app:layout_constraintTop_toBottomOf="@+id/osc1_freq" />
+
+        <TextView
+            android:id="@+id/osc1_vol_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="208dp"
+            android:layout_marginTop="24dp"
+            android:text="Volume"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/osc1_freq_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="208dp"
+            android:text="Frequency"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.504" />
+
+        <TextView
+            android:id="@+id/osc1_fmmod_label"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="132dp"
+            android:layout_marginTop="8dp"
+            android:text="FM Mod"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/osc1_volmod_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="8dp"
+            android:text="Vol. Mod"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc1_fmmod_label"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="385dp"
+        android:layout_height="132dp"
+        android:layout_marginTop="136dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Switch
-        android:id="@+id/osc2_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="72dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
-        android:text="Oscillator  "
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/osc_switch" />
+        <Switch
+            android:id="@+id/osc2_power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Power "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <SeekBar
-        android:id="@+id/osc2_freq_bar"
-        android:layout_width="206dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="64dp"
-        android:max="2000"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sine_freq_bar" />
+        <Switch
+            android:id="@+id/osc2_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Type "
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/osc2_power" />
 
-    <Switch
-        android:id="@+id/osc2_wavetype_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="220dp"
-        android:layout_marginTop="60dp"
-        android:text="Wavetype  "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wavetype_switch" />
+        <SeekBar
+            android:id="@+id/osc2_volume"
+            android:layout_width="278dp"
+            android:layout_height="18dp"
+            android:max="100"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/osc2_power"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <SeekBar
+            android:id="@+id/osc2_freq"
+            android:layout_width="278dp"
+            android:layout_height="19dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="16dp"
+            android:max="2000"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc2_type"
+            app:layout_constraintTop_toBottomOf="@+id/osc2_volume" />
+
+        <Button
+            android:id="@+id/osc2_output"
+            android:layout_width="34dp"
+            android:layout_height="37dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="O"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/osc2_type" />
+
+        <Button
+            android:id="@+id/osc2_fmmod_btn"
+            android:layout_width="35dp"
+            android:layout_height="39dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="F"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc2_output"
+            app:layout_constraintTop_toBottomOf="@+id/osc2_type" />
+
+        <SeekBar
+            android:id="@+id/osc2_fmmod"
+            android:layout_width="117dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toEndOf="@+id/osc2_fmmod_btn"
+            app:layout_constraintTop_toBottomOf="@+id/osc2_freq" />
+
+        <SeekBar
+            android:id="@+id/osc2_volmod"
+            android:layout_width="132dp"
+            android:layout_height="24dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc2_fmmod"
+            app:layout_constraintTop_toBottomOf="@+id/osc2_freq" />
+
+        <TextView
+            android:id="@+id/osc2_vol_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="208dp"
+            android:layout_marginTop="24dp"
+            android:text="Volume"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/osc2_freq_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="208dp"
+            android:text="Frequency"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.504" />
+
+        <TextView
+            android:id="@+id/osc2_fmmod_label"
+            android:layout_width="wrap_content"
+            android:layout_height="18dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="132dp"
+            android:layout_marginTop="8dp"
+            android:text="FM Mod"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/osc2_volmod_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="100dp"
+            android:layout_marginTop="8dp"
+            android:text="Vol. Mod"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/osc2_fmmod_label"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <Switch
         android:id="@+id/fm_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="76dp"
-        android:layout_marginTop="148dp"
-        android:text="FM / Doubled  "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:text="FM  "
+        app:layout_constraintBottom_toTopOf="@+id/mixer_switch"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

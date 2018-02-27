@@ -44,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
     Switch osc2_waveTypeSwitch;
     Switch fmSwitch;
     SeekBar volumeBar;
+    SeekBar osc1_volumeBar;
+    SeekBar osc2_volumeBar;
+    SeekBar osc1_fmModBar;
+    SeekBar osc2_fmModBar;
+    SeekBar osc1_volModBar;
+    SeekBar osc2_volModBar;
 
     Thread osc1Thread;
     Thread osc2Thread;
@@ -59,13 +65,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // v importante
 
-        osc1_powerSwitch = (Switch) this.findViewById(R.id.osc_switch);
-        osc2_powerSwitch = (Switch) this.findViewById(R.id.osc2_switch);
-        osc2_freqBar = (SeekBar) this.findViewById(R.id.osc2_freq_bar);
-        osc1_freqBar = (SeekBar) this.findViewById(R.id.sine_freq_bar);
+        osc1_powerSwitch = (Switch) this.findViewById(R.id.osc1_power);
+        osc2_powerSwitch = (Switch) this.findViewById(R.id.osc2_power);
+        osc2_freqBar = (SeekBar) this.findViewById(R.id.osc2_freq);
+        osc1_freqBar = (SeekBar) this.findViewById(R.id.osc1_freq);
+        osc1_volumeBar = (SeekBar) this.findViewById(R.id.osc1_volume);
+        osc2_volumeBar = (SeekBar) this.findViewById(R.id.osc2_volume);
+        osc1_fmModBar = (SeekBar) this.findViewById(R.id.osc1_fmmod);
+        osc2_fmModBar = (SeekBar) this.findViewById(R.id.osc2_fmmod);
+        osc1_volModBar = (SeekBar) this.findViewById(R.id.osc1_volmod);
+        osc2_volModBar = (SeekBar) this.findViewById(R.id.osc2_volmod);
         mixerSwitch = (Switch) this.findViewById(R.id.mixer_switch);
-        osc2_waveTypeSwitch = (Switch) this.findViewById(R.id.osc2_wavetype_switch);
-        osc1_waveTypeSwitch = (Switch) this.findViewById(R.id.wavetype_switch);
+        osc2_waveTypeSwitch = (Switch) this.findViewById(R.id.osc2_type);
+        osc1_waveTypeSwitch = (Switch) this.findViewById(R.id.osc1_type);
         volumeBar = (SeekBar) this.findViewById(R.id.volume_seek_bar);
         fmSwitch = (Switch) this.findViewById(R.id.fm_switch);
 
