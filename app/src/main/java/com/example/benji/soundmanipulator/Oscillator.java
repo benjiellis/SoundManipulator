@@ -26,10 +26,38 @@ public class Oscillator implements Runnable {
     SeekBar freqBar;
     WAVETYPE type;
     private boolean isActive = true;
-    ConcurrentLinkedQueue<double[]> output;
-    ConcurrentLinkedQueue<double[]> fmMod;
+//    ConcurrentLinkedQueue<double[]> output;
+//    ConcurrentLinkedQueue<double[]> fmMod;
+    Cable output;
+    Cable fmMod;
 
-    Oscillator(SeekBar bar, WAVETYPE type, ConcurrentLinkedQueue<double[]> output, ConcurrentLinkedQueue<double[]> fmInput) {
+    public void setOutputCable(Cable out) {
+        if (out.isInputTaken()) {
+            Log.d("AV", "Cable already has input assigned");
+            return;
+        }
+        this.output = out;
+    }
+
+    public void setFMCable(Cable in) {
+        if (in.isOutputTaken()) {
+            Log.d("AV", "Cable already has output assigned");
+            return;
+        }
+        this.fmMod = in;
+    }
+
+    public void setFMCable() {
+        this.fmMod.setOutputTaken(false);
+        this.fmMod = new Cable();
+    }
+
+    public void setOutputCable() {
+        this.output.setInputTaken(false);
+        this.output = new Cable();
+    }
+
+    Oscillator(SeekBar bar, WAVETYPE type, Cable output, Cable fmInput) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
@@ -42,6 +70,19 @@ public class Oscillator implements Runnable {
         this.fmMod = fmInput;
     }
 
+    Oscillator(SeekBar bar) {
+        WaveSpecs spec = new WaveSpecs();
+        this.BUFFER_SIZE = spec.getMinimumBufferSize();
+        this.SAMPLE_RATE = spec.getRate();
+        this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
+                spec.getChannels(), spec.getFormat(),
+                spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
+        this.freqBar = bar;
+        this.type = WAVETYPE.SINE;
+        this.output = new Cable();
+        this.fmMod = new Cable();
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -51,7 +92,7 @@ public class Oscillator implements Runnable {
     }
 
     private double sineCalc(MutableDouble currentAngle, double fm) {
-        double angleIncrement = (2.0 * Math.PI) * (freqBar.getProgress()+(fm*500)) / SAMPLE_RATE;
+        double angleIncrement = (2.0 * Math.PI) * (freqBar.getProgress()+(fm*600)) / SAMPLE_RATE;
         currentAngle.setValue(currentAngle.getValue() + angleIncrement);
         currentAngle.setValue(currentAngle.getValue() % (2 * Math.PI));
         return Math.sin(currentAngle.getValue());
@@ -61,7 +102,7 @@ public class Oscillator implements Runnable {
         int bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         //bufferSize *= 2;
-        double[] fmBuffer = fmMod.poll();
+        double[] fmBuffer = fmMod.getBuffer().poll();
         if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
         double[] buffer = new double[bufferSize];
         for (int i = 0; i < bufferSize; i++) {
@@ -77,9 +118,9 @@ public class Oscillator implements Runnable {
         MutableDouble currentAngle = new MutableDouble(0);
         if (this.type == WAVETYPE.SINE) {
             while (isActive) {
-                if (output.isEmpty()) {
+                if (output.getBuffer().isEmpty()) {
                     //short[] buffer = getSineBuffer(currentAngle);
-                    output.offer(getSineBuffer(currentAngle));
+                    output.getBuffer().offer(getSineBuffer(currentAngle));
                 }
             }
         }

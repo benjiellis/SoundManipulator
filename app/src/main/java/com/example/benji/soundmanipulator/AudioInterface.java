@@ -14,16 +14,43 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AudioInterface implements Runnable {
-    private ConcurrentLinkedQueue<double[]> input1;
-    private ConcurrentLinkedQueue<double[]> input2;
+//    private ConcurrentLinkedQueue<double[]> input1;
+//    private ConcurrentLinkedQueue<double[]> input2;
+    private Cable input1;
+    private Cable input2;
     private AudioTrack track;
     private boolean isActive;
     private SeekBar volumeBar;
     private int bufferSize;
 
-    AudioInterface(SeekBar volumeBar, ConcurrentLinkedQueue<double[]> input1,
-                   ConcurrentLinkedQueue<double[]> input2) {
+    public void setInput1(Cable in) {
+        if (in.isOutputTaken()) {
+            Log.d("AV", "Cable already has output assigned");
+            return ;
+        }
+        this.input1 = in;
+    }
 
+    public void setInput2(Cable in) {
+        if (in.isOutputTaken()) {
+            Log.d("AV", "Cable already has output assigned");
+            return ;
+        }
+        this.input2 = in;
+    }
+
+    public void setInput1() {
+        this.input1.setOutputTaken(false);
+        this.input1 = new Cable();
+    }
+
+    public void setInput2() {
+        this.input2.setOutputTaken(false);
+        this.input2 = new Cable();
+    }
+
+    AudioInterface(SeekBar volumeBar, Cable input1,
+                   Cable input2) {
         WaveSpecs spec = new WaveSpecs();
         this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
                 spec.getChannels(), spec.getFormat(),
@@ -36,6 +63,19 @@ public class AudioInterface implements Runnable {
         this.volumeBar = volumeBar;
     }
 
+    AudioInterface(SeekBar volumeBar) {
+        WaveSpecs spec = new WaveSpecs();
+        this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
+                spec.getChannels(), spec.getFormat(),
+                spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
+        this.bufferSize = AudioTrack.getMinBufferSize(22050,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        this.isActive = false;
+        this.input2 = new Cable();
+        this.input1 = new Cable();
+        this.volumeBar = volumeBar;
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -44,8 +84,8 @@ public class AudioInterface implements Runnable {
         isActive = true;
         track.play();
         while(isActive) {
-            double[] data1 = input1.poll();
-            double[] data2 = input2.poll();
+            double[] data1 = input1.getBuffer().poll();
+            double[] data2 = input2.getBuffer().poll();
 //            if (data1 == null) {
 //            }
 //            else {
