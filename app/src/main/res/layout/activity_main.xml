@@ -117,7 +117,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:max="2"
+            android:max="2000"
             app:layout_constraintStart_toEndOf="@+id/button2"
             app:layout_constraintTop_toBottomOf="@+id/osc1_freq" />
 
