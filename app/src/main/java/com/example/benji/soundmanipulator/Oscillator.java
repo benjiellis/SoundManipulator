@@ -30,8 +30,8 @@ public class Oscillator implements Runnable {
 //    ConcurrentLinkedQueue<double[]> output;
 //    ConcurrentLinkedQueue<double[]> fmMod;
     private Cable output;
-    private Cable fmMod;
-    private Cable volMod;
+    private Cable freqMod;
+    private SeekBar freqModAmount;
 
     public void setOutputCable(Cable out) {
         if (out.isInputTaken()) {
@@ -46,12 +46,12 @@ public class Oscillator implements Runnable {
             Log.d("AV", "Cable already has output assigned");
             return;
         }
-        this.fmMod = in;
+        this.freqMod = in;
     }
 
     public void setFMCable() {
-        this.fmMod.setOutputTaken(false);
-        this.fmMod = new Cable();
+        this.freqMod.setOutputTaken(false);
+        this.freqMod = new Cable();
     }
 
     public void setOutputCable() {
@@ -59,20 +59,9 @@ public class Oscillator implements Runnable {
         this.output = new Cable();
     }
 
-    public void setVolModCable(Cable in) {
-        if (in.isOutputTaken()) {
-            Log.d("AV", "Cable already has output assigned");
-            return;
-        }
-        this.volMod = in;
-    }
 
-    public void setVolModCable() {
-        this.volMod.setOutputTaken(false);
-        this.volMod = new Cable();
-    }
-
-    Oscillator(SeekBar freqBar, SeekBar volBar, WAVETYPE type, Cable output, Cable fmInput, Cable volMod) {
+    Oscillator(SeekBar freqBar, SeekBar volBar, WAVETYPE type, Cable output, Cable fmInput,
+               Cable fmAmount) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
@@ -83,11 +72,10 @@ public class Oscillator implements Runnable {
         this.volBar = volBar;
         this.type = type;
         this.output = output;
-        this.fmMod = fmInput;
-        this.volMod = volMod;
+        this.freqMod = fmInput;
     }
 
-    Oscillator(SeekBar freqBar, SeekBar volBar) {
+    Oscillator(SeekBar freqBar, SeekBar volBar, SeekBar freqModAmount) {
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
@@ -98,8 +86,8 @@ public class Oscillator implements Runnable {
         this.volBar = volBar;
         this.type = WAVETYPE.SINE;
         this.output = new Cable();
-        this.fmMod = new Cable();
-        this.volMod = new Cable();
+        this.freqMod = new Cable();
+        this.freqModAmount = freqModAmount;
     }
 
     public boolean isActive() {
@@ -111,7 +99,8 @@ public class Oscillator implements Runnable {
     }
 
     private double sineCalc(MutableDouble currentAngle, double fm) {
-        double angleIncrement = (2.0 * Math.PI) * (freqBar.getProgress()+(fm*600)) / SAMPLE_RATE;
+        double angleIncrement = (2.0 * Math.PI) *
+                (freqBar.getProgress()+(fm*freqModAmount.getProgress())) / SAMPLE_RATE;
         currentAngle.setValue(currentAngle.getValue() + angleIncrement);
         currentAngle.setValue(currentAngle.getValue() % (2 * Math.PI));
         return Math.sin(currentAngle.getValue());
@@ -121,13 +110,16 @@ public class Oscillator implements Runnable {
         int bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         //bufferSize *= 2;
-        double[] fmBuffer = fmMod.getBuffer().poll();
+
+        double[] fmBuffer = freqMod.getBuffer().poll();
         if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
+
         double[] buffer = new double[bufferSize];
-        double volume = volBar.getProgress() / 100.0;
+        double volume = (volBar.getProgress() / 100.0);
+
         for (int i = 0; i < bufferSize; i++) {
             //Log.d("VALUE", String.valueOf(fmBuffer[i]));
-            buffer[i] = sineCalc(currentAngle, fmBuffer[i]) * volume;
+            buffer[i] = limit(sineCalc(currentAngle, fmBuffer[i]) * volume);
         }
         return buffer;
     }
@@ -161,6 +153,12 @@ public class Oscillator implements Runnable {
     @Override
     public void run() {
         this.on();
+    }
+
+    private double limit(double b) {
+        if (b > 1) { return 1; }
+        if (b < -1) { return -1; }
+        else { return b; }
     }
 }
 

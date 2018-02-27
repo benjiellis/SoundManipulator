@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
     SeekBar osc2_volumeBar;
     SeekBar osc1_fmModBar;
     SeekBar osc2_fmModBar;
-    SeekBar osc1_volModBar;
-    SeekBar osc2_volModBar;
 
     Thread osc1Thread;
     Thread osc2Thread;
@@ -73,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
         osc2_volumeBar = (SeekBar) this.findViewById(R.id.osc2_volume);
         osc1_fmModBar = (SeekBar) this.findViewById(R.id.osc1_fmmod);
         osc2_fmModBar = (SeekBar) this.findViewById(R.id.osc2_fmmod);
-        osc1_volModBar = (SeekBar) this.findViewById(R.id.osc1_volmod);
-        osc2_volModBar = (SeekBar) this.findViewById(R.id.osc2_volmod);
         mixerSwitch = (Switch) this.findViewById(R.id.mixer_switch);
         osc2_waveTypeSwitch = (Switch) this.findViewById(R.id.osc2_type);
         osc1_waveTypeSwitch = (Switch) this.findViewById(R.id.osc1_type);
@@ -82,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
         fmSwitch = (Switch) this.findViewById(R.id.fm_switch);
 
         amp = new AudioInterface(volumeBar);
-        osc1 = new Oscillator(osc1_freqBar, osc1_volumeBar);
-        osc2 = new Oscillator(osc2_freqBar, osc2_volumeBar);
+        osc1 = new Oscillator(osc1_freqBar, osc1_volumeBar, osc1_fmModBar);
+        osc2 = new Oscillator(osc2_freqBar, osc2_volumeBar, osc2_fmModBar);
 
         amp.setInput1(osc1Cable);
         osc1.setOutputCable(osc1Cable);
