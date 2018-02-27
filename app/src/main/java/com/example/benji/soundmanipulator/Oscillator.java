@@ -49,14 +49,24 @@ public class Oscillator implements Runnable {
         this.freqMod = in;
     }
 
+    public Cable getOutput() {
+        return this.output;
+    }
+
+    public Cable getFM() {
+        return this.freqMod;
+    }
+
     public void setFMCable() {
         this.freqMod.setOutputTaken(false);
         this.freqMod = new Cable();
+        this.freqMod.setOutputTaken(true);
     }
 
     public void setOutputCable() {
         this.output.setInputTaken(false);
         this.output = new Cable();
+        this.output.setInputTaken(true);
     }
 
 

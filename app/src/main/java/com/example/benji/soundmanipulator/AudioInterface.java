@@ -29,6 +29,15 @@ public class AudioInterface implements Runnable {
             return ;
         }
         this.input1 = in;
+        this.input1.setOutputTaken(true);
+    }
+
+    public Cable getInput1() {
+        return this.input1;
+    }
+
+    public Cable getInput2() {
+        return this.input2;
     }
 
     public void setInput2(Cable in) {
@@ -37,16 +46,19 @@ public class AudioInterface implements Runnable {
             return ;
         }
         this.input2 = in;
+        this.input2.setOutputTaken(true);
     }
 
     public void setInput1() {
         this.input1.setOutputTaken(false);
         this.input1 = new Cable();
+        this.input1.setOutputTaken(true);
     }
 
     public void setInput2() {
         this.input2.setOutputTaken(false);
         this.input2 = new Cable();
+        this.input2.setOutputTaken(true);
     }
 
     AudioInterface(SeekBar volumeBar, Cable input1,

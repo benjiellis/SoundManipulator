@@ -23,6 +23,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="468dp"
         android:max="100"
+        android:progress="50"
         app:layout_constraintStart_toEndOf="@+id/mixer_switch"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,6 +73,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:max="100"
+            android:progress="50"
             app:layout_constraintStart_toEndOf="@+id/osc1_power"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,6 +85,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
             android:max="2000"
+            android:progress="880"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/osc1_type"
             app:layout_constraintTop_toBottomOf="@+id/osc1_volume" />
@@ -100,7 +103,7 @@
             app:layout_constraintTop_toBottomOf="@+id/osc1_type" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/osc1_fmmod_btn"
             android:layout_width="35dp"
             android:layout_height="39dp"
             android:layout_marginBottom="16dp"
@@ -118,7 +121,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:max="2000"
-            app:layout_constraintStart_toEndOf="@+id/button2"
+            android:progress="400"
+            app:layout_constraintStart_toEndOf="@+id/osc1_fmmod_btn"
             app:layout_constraintTop_toBottomOf="@+id/osc1_freq" />
 
         <TextView
@@ -191,6 +195,7 @@
             android:layout_width="278dp"
             android:layout_height="18dp"
             android:max="100"
+            android:progress="50"
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toEndOf="@+id/osc2_power"
@@ -204,6 +209,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
             android:max="2000"
+            android:progress="440"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/osc2_type"
             app:layout_constraintTop_toBottomOf="@+id/osc2_volume" />
@@ -238,7 +244,8 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:max="2"
+            android:max="2000"
+            android:progress="400"
             app:layout_constraintStart_toEndOf="@+id/osc2_fmmod_btn"
             app:layout_constraintTop_toBottomOf="@+id/osc2_freq" />
 
@@ -278,15 +285,25 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <Switch
-        android:id="@+id/fm_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/mixer_input1"
+        android:layout_width="37dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:text="1"
+        app:layout_constraintBottom_toTopOf="@+id/mixer_switch"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/mixer_input2"
+        android:layout_width="37dp"
+        android:layout_height="44dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
-        android:text="FM  "
+        android:text="2"
         app:layout_constraintBottom_toTopOf="@+id/mixer_switch"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/mixer_input1" />
 
 
 </android.support.constraint.ConstraintLayout>
