@@ -32,6 +32,25 @@ public class Oscillator implements Runnable {
     private Cable output;
     private Cable freqMod;
     private SeekBar freqModAmount;
+    private Cable volt;
+
+    public void setVoltCable(Cable in) {
+        if (in.isOutputTaken()) {
+            Log.d("AV", "Cable already has output assigned");
+            return;
+        }
+        this.volt = in;
+    }
+
+    public void setVoltCable() {
+        this.volt.setOutputTaken(false);
+        this.volt = new Cable();
+        this.volt.setOutputTaken(true);
+    }
+
+    public Cable getVolt() {
+        return this.volt;
+    }
 
     public void setOutputCable(Cable out) {
         if (out.isInputTaken()) {
@@ -127,8 +146,17 @@ public class Oscillator implements Runnable {
         double[] buffer = new double[bufferSize];
         double volume = (volBar.getProgress() / 100.0);
 
+        double[] voltBuffer = volt.getBuffer().poll();
+        if (voltBuffer == null) {
+            voltBuffer = new double[bufferSize];
+            for (int i = 0; i < bufferSize; i++) {
+                voltBuffer[i] = 1;
+            }
+        }
+
         for (int i = 0; i < bufferSize; i++) {
             //Log.d("VALUE", String.valueOf(fmBuffer[i]));
+            double vol = volume * voltBuffer[i];
             buffer[i] = limit(sineCalc(currentAngle, fmBuffer[i]) * volume);
         }
         return buffer;

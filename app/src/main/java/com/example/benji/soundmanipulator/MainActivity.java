@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     Oscillator osc1;
     Oscillator osc2;
     AudioInterface amp;
+
+    ADSR adsr1;
+
     SeekBar osc1_freqBar;
     SeekBar osc2_freqBar;
     Switch osc1_powerSwitch;
@@ -48,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
     SeekBar osc1_fmModBar;
     SeekBar osc2_fmModBar;
 
+    SeekBar attackBar;
+    SeekBar decayBar;
+    SeekBar sustainBar;
+    SeekBar releaseBar;
+
+    Button adsrOutput;
+    Button adsrTrigger;
+    Switch adsrPower;
+
     Button osc1_outBtn;
     Button osc2_outBtn;
     Button osc1_fmBtn;
@@ -58,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     Thread osc1Thread;
     Thread osc2Thread;
     Thread ampThread;
+    Thread adsrThread;
 
     Cable osc1Cable = new Cable();
     Cable osc2Cable = new Cable();
@@ -84,6 +97,15 @@ public class MainActivity extends AppCompatActivity {
         osc1_waveTypeSwitch = (Switch) this.findViewById(R.id.osc1_type);
         volumeBar = (SeekBar) this.findViewById(R.id.volume_seek_bar);
 
+        attackBar = (SeekBar) this.findViewById(R.id.attack_bar);
+        decayBar = (SeekBar) this.findViewById(R.id.decay_bar);
+        sustainBar = (SeekBar) this.findViewById(R.id.sustain_bar);
+        releaseBar = (SeekBar) this.findViewById(R.id.release_bar);
+
+        adsrOutput = (Button) this.findViewById(R.id.adsr_output_btn);
+        adsrPower = (Switch) this.findViewById(R.id.adsr_power);
+        adsrTrigger = (Button) this.findViewById(R.id.adsr_trigger);
+
         osc1_outBtn = (Button) this.findViewById(R.id.osc1_output);
         osc2_outBtn = (Button) this.findViewById(R.id.osc2_output);
         osc1_fmBtn = (Button) this.findViewById(R.id.osc1_fmmod_btn);
@@ -94,6 +116,37 @@ public class MainActivity extends AppCompatActivity {
         amp = new AudioInterface(volumeBar);
         osc1 = new Oscillator(osc1_freqBar, osc1_volumeBar, osc1_fmModBar);
         osc2 = new Oscillator(osc2_freqBar, osc2_volumeBar, osc2_fmModBar);
+        adsr1 = new ADSR(attackBar, decayBar, sustainBar, releaseBar, adsrTrigger);
+
+        adsrPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // do something, the isChecked will be
+                // true if the switch is in the On position
+
+                if (adsrPower.isChecked()) {
+                    adsrThread = new Thread(adsr1);
+                    adsrThread.start();
+                }
+                else {
+                    adsr1.off();
+                }
+
+            }
+        });
+
+        adsrOutput.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onDeck == null) {
+                    adsr1.setOutputCable();
+                    onDeck = adsr1.getOutputCable();
+                }
+                else {
+                    adsr1.setOutputCable(onDeck);
+                    onDeck = null;
+                }
+            }
+        });
 
         mix_in1Btn.setOnClickListener(new OnClickListener() {
             @Override
