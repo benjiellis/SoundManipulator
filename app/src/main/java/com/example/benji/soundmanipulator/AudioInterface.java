@@ -15,8 +15,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AudioInterface extends Box {
 
-    private Cable input1;
-    private Cable input2;
+    private Port input1;
+    private Port input2;
     private AudioTrack track;
     private SeekBar volumeBar;
     private int bufferSize;
@@ -26,15 +26,15 @@ public class AudioInterface extends Box {
             Log.d("AV", "Cable already has output assigned");
             return ;
         }
-        this.input1 = in;
-        this.input1.setOutputTaken(true);
+        this.input1.setLink(in);
+        this.input1.getLink().setOutputTaken(true);
     }
 
-    public Cable getInput1() {
+    public Port getInput1() {
         return this.input1;
     }
 
-    public Cable getInput2() {
+    public Port getInput2() {
         return this.input2;
     }
 
@@ -43,33 +43,20 @@ public class AudioInterface extends Box {
             Log.d("AV", "Cable already has output assigned");
             return ;
         }
-        this.input2 = in;
-        this.input2.setOutputTaken(true);
+        this.input2.setLink(in);
+        this.input2.getLink().setOutputTaken(true);
     }
 
     public void setInput1() {
-        this.input1.setOutputTaken(false);
-        this.input1 = new Cable();
-        this.input1.setOutputTaken(true);
+        this.input1.getLink().setOutputTaken(false);
+        this.input1.setLink();
+        this.input1.getLink().setOutputTaken(true);
     }
 
     public void setInput2() {
-        this.input2.setOutputTaken(false);
-        this.input2 = new Cable();
-        this.input2.setOutputTaken(true);
-    }
-
-    AudioInterface(SeekBar volumeBar, Cable input1,
-                   Cable input2) {
-        WaveSpecs spec = new WaveSpecs();
-        this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
-                spec.getChannels(), spec.getFormat(),
-                spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
-        this.bufferSize = AudioTrack.getMinBufferSize(22050,
-                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        this.input1 = input1;
-        this.input2 = input2;
-        this.volumeBar = volumeBar;
+        this.input2.getLink().setOutputTaken(false);
+        this.input2.setLink();
+        this.input2.getLink().setOutputTaken(true);
     }
 
     AudioInterface(SeekBar volumeBar) {
@@ -79,8 +66,8 @@ public class AudioInterface extends Box {
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
         this.bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        this.input2 = new Cable();
-        this.input1 = new Cable();
+        this.input2 = new Port(false);
+        this.input1 = new Port(false);
         this.volumeBar = volumeBar;
     }
 
@@ -88,8 +75,8 @@ public class AudioInterface extends Box {
     public void on() {
         track.play();
         while(this.isActive()) {
-            double[] data1 = input1.getBuffer().poll();
-            double[] data2 = input2.getBuffer().poll();
+            double[] data1 = input1.getLink().getBuffer().poll();
+            double[] data2 = input2.getLink().getBuffer().poll();
 //            if (data1 == null) {
 //            }
 //            else {

@@ -4,6 +4,7 @@ package com.example.benji.soundmanipulator;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -103,5 +104,10 @@ public class AudioInterfaceView extends ConstraintLayout {
 
             }
         });
+
+        input1Btn.setOnClickListener(new PortOnClickListener(amp.getInput1()));
+
+        input1Btn.setOnClickListener(new PortOnClickListener(amp.getInput2()));
+
     }
 }

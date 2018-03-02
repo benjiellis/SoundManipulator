@@ -26,10 +26,8 @@ public class Oscillator extends Box {
     private SeekBar freqBar;
     private SeekBar volBar;
     private WAVETYPE type;
-//    ConcurrentLinkedQueue<double[]> output;
-//    ConcurrentLinkedQueue<double[]> fmMod;
-    private Cable output;
-    private Cable freqMod;
+    private Port output;
+    private Port freqMod;
     private SeekBar freqModAmount;
 
     public void setOutputCable(Cable out) {
@@ -37,7 +35,7 @@ public class Oscillator extends Box {
             Log.d("AV", "Cable already has input assigned");
             return;
         }
-        this.output = out;
+        this.output.setLink(out);
     }
 
     public void setFMCable(Cable in) {
@@ -45,43 +43,27 @@ public class Oscillator extends Box {
             Log.d("AV", "Cable already has output assigned");
             return;
         }
-        this.freqMod = in;
+        this.freqMod.setLink(in);
     }
 
-    public Cable getOutput() {
+    public Port getOutput() {
         return this.output;
     }
 
-    public Cable getFM() {
+    public Port getFM() {
         return this.freqMod;
     }
 
     public void setFMCable() {
-        this.freqMod.setOutputTaken(false);
-        this.freqMod = new Cable();
-        this.freqMod.setOutputTaken(true);
+        this.freqMod.getLink().setOutputTaken(false);
+        this.freqMod = new Port(false);
+        this.freqMod.getLink().setOutputTaken(true);
     }
 
     public void setOutputCable() {
-        this.output.setInputTaken(false);
-        this.output = new Cable();
-        this.output.setInputTaken(true);
-    }
-
-
-    Oscillator(SeekBar freqBar, SeekBar volBar, WAVETYPE type, Cable output, Cable fmInput,
-               Cable fmAmount) {
-        WaveSpecs spec = new WaveSpecs();
-        this.BUFFER_SIZE = spec.getMinimumBufferSize();
-        this.SAMPLE_RATE = spec.getRate();
-        this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
-                spec.getChannels(), spec.getFormat(),
-                spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
-        this.freqBar = freqBar;
-        this.volBar = volBar;
-        this.type = type;
-        this.output = output;
-        this.freqMod = fmInput;
+        this.output.getLink().setInputTaken(false);
+        this.output = new Port(true);
+        this.output.getLink().setInputTaken(true);
     }
 
     Oscillator(SeekBar freqBar, SeekBar volBar, SeekBar freqModAmount) {
@@ -94,8 +76,8 @@ public class Oscillator extends Box {
         this.freqBar = freqBar;
         this.volBar = volBar;
         this.type = WAVETYPE.SINE;
-        this.output = new Cable();
-        this.freqMod = new Cable();
+        this.output = new Port(true);
+        this.freqMod = new Port(false);
         this.freqModAmount = freqModAmount;
     }
 
@@ -112,7 +94,7 @@ public class Oscillator extends Box {
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         //bufferSize *= 2;
 
-        double[] fmBuffer = freqMod.getBuffer().poll();
+        double[] fmBuffer = freqMod.getLink().getBuffer().poll();
         if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
 
         double[] buffer = new double[bufferSize];
@@ -131,9 +113,9 @@ public class Oscillator extends Box {
         MutableDouble currentAngle = new MutableDouble(0);
         if (this.type == WAVETYPE.SINE) {
             while (this.isActive()) {
-                if (output.getBuffer().isEmpty()) {
+                if (output.getLink().getBuffer().isEmpty()) {
                     //short[] buffer = getSineBuffer(currentAngle);
-                    output.getBuffer().offer(getSineBuffer(currentAngle));
+                    output.getLink().getBuffer().offer(getSineBuffer(currentAngle));
                 }
             }
         }

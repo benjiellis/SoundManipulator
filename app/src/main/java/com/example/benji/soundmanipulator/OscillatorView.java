@@ -144,5 +144,8 @@ public class OscillatorView extends ConstraintLayout {
             }
         });
 
+        outputBtn.setOnClickListener(new PortOnClickListener(osc.getOutput()));
+        freqBtn.setOnClickListener(new PortOnClickListener(osc.getFM()));
+
     }
 }
