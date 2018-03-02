@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.SeekBar;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ enum WAVETYPE {
     SINE, SAW, SQUARE
 }
 
-public class Oscillator implements Runnable {
+public class Oscillator extends Box {
 
     private int BUFFER_SIZE;
     private int SAMPLE_RATE;
@@ -26,85 +27,27 @@ public class Oscillator implements Runnable {
     private SeekBar freqBar;
     private SeekBar volBar;
     private WAVETYPE type;
-    private boolean isActive = true;
-//    ConcurrentLinkedQueue<double[]> output;
-//    ConcurrentLinkedQueue<double[]> fmMod;
-    private Cable output;
-    private Cable freqMod;
+
+    public Port getOutput() {
+        return output;
+    }
+
+    public Port getFreqMod() {
+        return freqMod;
+    }
+
+    public Port getVolt() {
+        return volt;
+    }
+
+    private Port output;
+    private Port freqMod;
+    private Port volt;
     private SeekBar freqModAmount;
-    private Cable volt;
 
-    public void setVoltCable(Cable in) {
-        if (in.isOutputTaken()) {
-            Log.d("AV", "Cable already has output assigned");
-            return;
-        }
-        this.volt = in;
-    }
-
-    public void setVoltCable() {
-        this.volt.setOutputTaken(false);
-        this.volt = new Cable();
-        this.volt.setOutputTaken(true);
-    }
-
-    public Cable getVolt() {
-        return this.volt;
-    }
-
-    public void setOutputCable(Cable out) {
-        if (out.isInputTaken()) {
-            Log.d("AV", "Cable already has input assigned");
-            return;
-        }
-        this.output = out;
-    }
-
-    public void setFMCable(Cable in) {
-        if (in.isOutputTaken()) {
-            Log.d("AV", "Cable already has output assigned");
-            return;
-        }
-        this.freqMod = in;
-    }
-
-    public Cable getOutput() {
-        return this.output;
-    }
-
-    public Cable getFM() {
-        return this.freqMod;
-    }
-
-    public void setFMCable() {
-        this.freqMod.setOutputTaken(false);
-        this.freqMod = new Cable();
-        this.freqMod.setOutputTaken(true);
-    }
-
-    public void setOutputCable() {
-        this.output.setInputTaken(false);
-        this.output = new Cable();
-        this.output.setInputTaken(true);
-    }
-
-
-    Oscillator(SeekBar freqBar, SeekBar volBar, WAVETYPE type, Cable output, Cable fmInput,
-               Cable fmAmount) {
-        WaveSpecs spec = new WaveSpecs();
-        this.BUFFER_SIZE = spec.getMinimumBufferSize();
-        this.SAMPLE_RATE = spec.getRate();
-        this.track = new AudioTrack(AudioManager.STREAM_MUSIC, spec.getRate(),
-                spec.getChannels(), spec.getFormat(),
-                spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
-        this.freqBar = freqBar;
-        this.volBar = volBar;
-        this.type = type;
-        this.output = output;
-        this.freqMod = fmInput;
-    }
-
-    Oscillator(SeekBar freqBar, SeekBar volBar, SeekBar freqModAmount) {
+    Oscillator(SeekBar freqBar, SeekBar volBar, SeekBar freqModAmount, CableManager manager,
+               Button outBtn, Button voltBtn, Button fmBtn) {
+        super(manager);
         WaveSpecs spec = new WaveSpecs();
         this.BUFFER_SIZE = spec.getMinimumBufferSize();
         this.SAMPLE_RATE = spec.getRate();
@@ -114,18 +57,14 @@ public class Oscillator implements Runnable {
         this.freqBar = freqBar;
         this.volBar = volBar;
         this.type = WAVETYPE.SINE;
-        this.output = new Cable();
-        this.freqMod = new Cable();
+        this.output = new Port("output", true, manager, outBtn);
+        this.freqMod = new Port("freqMod", false, manager, fmBtn);
+        this.volt = new Port("volt", false, manager, voltBtn);
         this.freqModAmount = freqModAmount;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
 
-    public void end() {
-        isActive = false;
-    }
+
 
     private double sineCalc(MutableDouble currentAngle, double fm) {
         double angleIncrement = (2.0 * Math.PI) *
@@ -140,19 +79,20 @@ public class Oscillator implements Runnable {
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         //bufferSize *= 2;
 
-        double[] fmBuffer = freqMod.getBuffer().poll();
+        double[] fmBuffer = freqMod.getLinkBuffer().poll();
         if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
 
         double[] buffer = new double[bufferSize];
         double volume = (volBar.getProgress() / 100.0);
 
-        double[] voltBuffer = volt.getBuffer().poll();
+        double[] voltBuffer = volt.getLinkBuffer().poll();
         if (voltBuffer == null) {
             voltBuffer = new double[bufferSize];
             for (int i = 0; i < bufferSize; i++) {
                 voltBuffer[i] = 1;
             }
         }
+
 
         for (int i = 0; i < bufferSize; i++) {
             //Log.d("VALUE", String.valueOf(fmBuffer[i]));
@@ -162,15 +102,15 @@ public class Oscillator implements Runnable {
         return buffer;
     }
 
+    @Override
     void on() {
-        isActive = true;
         track.play();
         MutableDouble currentAngle = new MutableDouble(0);
         if (this.type == WAVETYPE.SINE) {
             while (isActive) {
-                if (output.getBuffer().isEmpty()) {
+                if (output.getLinkBuffer().isEmpty()) {
                     //short[] buffer = getSineBuffer(currentAngle);
-                    output.getBuffer().offer(getSineBuffer(currentAngle));
+                    output.getLinkBuffer().offer(getSineBuffer(currentAngle));
                 }
             }
         }
@@ -186,11 +126,6 @@ public class Oscillator implements Runnable {
         short[] mBuffer = new short[1];
         mBuffer[0] = s;
         return mBuffer;
-    }
-
-    @Override
-    public void run() {
-        this.on();
     }
 
     private double limit(double b) {

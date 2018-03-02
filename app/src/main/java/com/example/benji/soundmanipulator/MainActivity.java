@@ -66,18 +66,22 @@ public class MainActivity extends AppCompatActivity {
     Button osc2_fmBtn;
     Button mix_in1Btn;
     Button mix_in2Btn;
+    Button osc1_voltBtn;
+    Button osc2_voltBtn;
 
     Thread osc1Thread;
     Thread osc2Thread;
     Thread ampThread;
     Thread adsrThread;
 
+    CableManager manager = new CableManager();
+
     Cable osc1Cable = new Cable();
     Cable osc2Cable = new Cable();
     Cable spareCable = new Cable();
     Cable spareCable2 = new Cable();
 
-    Cable onDeck = null;
+    Port onDeck = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,15 +112,17 @@ public class MainActivity extends AppCompatActivity {
 
         osc1_outBtn = (Button) this.findViewById(R.id.osc1_output);
         osc2_outBtn = (Button) this.findViewById(R.id.osc2_output);
+        osc1_voltBtn = (Button) this.findViewById(R.id.osc1_volt_btn);
         osc1_fmBtn = (Button) this.findViewById(R.id.osc1_fmmod_btn);
         osc2_fmBtn = (Button) this.findViewById(R.id.osc2_fmmod_btn);
+        osc2_voltBtn = (Button) this.findViewById(R.id.osc2_volt_btn);
         mix_in1Btn = (Button) this.findViewById(R.id.mixer_input1);
         mix_in2Btn = (Button) this.findViewById(R.id.mixer_input2);
 
-        amp = new AudioInterface(volumeBar);
-        osc1 = new Oscillator(osc1_freqBar, osc1_volumeBar, osc1_fmModBar);
-        osc2 = new Oscillator(osc2_freqBar, osc2_volumeBar, osc2_fmModBar);
-        adsr1 = new ADSR(attackBar, decayBar, sustainBar, releaseBar, adsrTrigger);
+        amp = new AudioInterface(volumeBar, manager, mix_in1Btn, mix_in2Btn);
+        osc1 = new Oscillator(osc1_freqBar, osc1_volumeBar, osc1_fmModBar, manager, osc1_outBtn, osc1_voltBtn, osc1_fmBtn);
+        osc2 = new Oscillator(osc2_freqBar, osc2_volumeBar, osc2_fmModBar, manager, osc2_outBtn, osc2_voltBtn, osc2_fmBtn);
+        adsr1 = new ADSR(attackBar, decayBar, sustainBar, releaseBar, adsrTrigger, manager, adsrOutput);
 
         adsrPower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -131,104 +137,6 @@ public class MainActivity extends AppCompatActivity {
                     adsr1.off();
                 }
 
-            }
-        });
-
-        adsrOutput.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    adsr1.setOutputCable();
-                    onDeck = adsr1.getOutputCable();
-                }
-                else {
-                    adsr1.setOutputCable(onDeck);
-                    onDeck = null;
-                }
-            }
-        });
-
-        mix_in1Btn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    amp.setInput1();
-                    onDeck = amp.getInput1();
-                }
-                else {
-                    amp.setInput1(onDeck);
-                    onDeck = null;
-                }
-            }
-        });
-
-        osc1_outBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    osc1.setOutputCable();
-                    onDeck = osc1.getOutput();
-                }
-                else {
-                    osc1.setOutputCable(onDeck);
-                    onDeck = null;
-                }
-            }
-        });
-
-        osc1_fmBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    osc1.setFMCable();
-                    onDeck = osc1.getFM();
-                }
-                else {
-                    osc1.setFMCable(onDeck);
-                    onDeck = null;
-                }
-            }
-        });
-
-        mix_in2Btn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    amp.setInput2();
-                    onDeck = amp.getInput2();
-                }
-                else {
-                    amp.setInput2(onDeck);
-                    onDeck = null;
-                }
-            }
-        });
-
-        osc2_fmBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    osc2.setFMCable();
-                    onDeck = osc2.getFM();
-                }
-                else {
-                    osc2.setFMCable(onDeck);
-                    onDeck = null;
-                }
-            }
-        });
-
-        osc2_outBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onDeck == null) {
-                    osc2.setOutputCable();
-                    onDeck = osc2.getOutput();
-                }
-                else {
-                    osc2.setOutputCable(onDeck);
-                    onDeck = null;
-                }
             }
         });
 
@@ -258,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                     osc1Thread.start();
                 }
                 else {
-                    osc1.end();
+                    osc1.off();
                 }
 
             }
@@ -272,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                     osc2Thread.start();
                 }
                 else {
-                    osc2.end();
+                    osc2.off();
                 }
 
             }

@@ -8,18 +8,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 
-public class ADSR implements Runnable {
-    private Cable output;
+public class ADSR extends Box {
+    private Port output;
     private Button trigger;
     private SeekBar attack;
     private SeekBar decay;
     private SeekBar sustain;
     private SeekBar release;
-    private boolean isActive;
     private boolean postPress;
     private int bufferSize;
 
-    ADSR(SeekBar attack, SeekBar decay, SeekBar sustain, SeekBar release, Button trigger) {
+    ADSR(SeekBar attack, SeekBar decay, SeekBar sustain, SeekBar release, Button trigger, CableManager manager, Button outputBtn) {
+        super(manager);
         this.attack = attack;
         this.decay = decay;
         this.sustain = sustain;
@@ -27,35 +27,15 @@ public class ADSR implements Runnable {
         this.trigger = trigger;
         this.bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        this.output = new Port("output", true, manager, outputBtn);
     }
 
-    public void setOutputCable(Cable out) {
-        if (out.isInputTaken()) {
-            Log.d("AV", "Cable has input taken already");
-        }
-        else {
-            this.output = out;
-        }
-    }
-
-    public void setOutputCable() {
-        this.output.setInputTaken(false);
-        this.output = new Cable();
-        this.output.setInputTaken(true);
-    }
-
-    public Cable getOutputCable() {
+    public Port getOutput() {
         return this.output;
     }
 
     @Override
-    public void run() {
-        // listener for button click then create ADSR envelope
-        on();
-    }
-
-    private void on() {
-        isActive = true;
+    void on() {
         double[] buffer = new double[bufferSize];
         int step = 0;
         while(isActive) {
@@ -76,7 +56,7 @@ public class ADSR implements Runnable {
                 buffer[i] = val;
             }
 
-            output.getBuffer().offer(buffer);
+            output.getLinkBuffer().offer(buffer);
         }
     }
 
@@ -95,7 +75,4 @@ public class ADSR implements Runnable {
         return 0;
     }
 
-    public void off() {
-        isActive = false;
-    }
 }
