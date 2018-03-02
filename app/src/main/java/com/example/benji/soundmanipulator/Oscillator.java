@@ -17,7 +17,7 @@ enum WAVETYPE {
     SINE, SAW, SQUARE
 }
 
-public class Oscillator implements Runnable {
+public class Oscillator extends Box {
 
     private int BUFFER_SIZE;
     private int SAMPLE_RATE;
@@ -26,7 +26,6 @@ public class Oscillator implements Runnable {
     private SeekBar freqBar;
     private SeekBar volBar;
     private WAVETYPE type;
-    private boolean isActive = true;
 //    ConcurrentLinkedQueue<double[]> output;
 //    ConcurrentLinkedQueue<double[]> fmMod;
     private Cable output;
@@ -100,14 +99,6 @@ public class Oscillator implements Runnable {
         this.freqModAmount = freqModAmount;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void end() {
-        isActive = false;
-    }
-
     private double sineCalc(MutableDouble currentAngle, double fm) {
         double angleIncrement = (2.0 * Math.PI) *
                 (freqBar.getProgress()+(fm*freqModAmount.getProgress())) / SAMPLE_RATE;
@@ -134,12 +125,12 @@ public class Oscillator implements Runnable {
         return buffer;
     }
 
+    @Override
     void on() {
-        isActive = true;
         track.play();
         MutableDouble currentAngle = new MutableDouble(0);
         if (this.type == WAVETYPE.SINE) {
-            while (isActive) {
+            while (this.isActive()) {
                 if (output.getBuffer().isEmpty()) {
                     //short[] buffer = getSineBuffer(currentAngle);
                     output.getBuffer().offer(getSineBuffer(currentAngle));
@@ -160,10 +151,6 @@ public class Oscillator implements Runnable {
         return mBuffer;
     }
 
-    @Override
-    public void run() {
-        this.on();
-    }
 
     private double limit(double b) {
         if (b > 1) { return 1; }

@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                     osc1Thread.start();
                 }
                 else {
-                    osc1.end();
+                    osc1.off();
                 }
 
             }
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                     osc2Thread.start();
                 }
                 else {
-                    osc2.end();
+                    osc2.off();
                 }
 
             }

@@ -13,13 +13,11 @@ import android.widget.SeekBar;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class AudioInterface implements Runnable {
-//    private ConcurrentLinkedQueue<double[]> input1;
-//    private ConcurrentLinkedQueue<double[]> input2;
+public class AudioInterface extends Box {
+
     private Cable input1;
     private Cable input2;
     private AudioTrack track;
-    private boolean isActive;
     private SeekBar volumeBar;
     private int bufferSize;
 
@@ -69,7 +67,6 @@ public class AudioInterface implements Runnable {
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
         this.bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        this.isActive = false;
         this.input1 = input1;
         this.input2 = input2;
         this.volumeBar = volumeBar;
@@ -82,20 +79,15 @@ public class AudioInterface implements Runnable {
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
         this.bufferSize = AudioTrack.getMinBufferSize(22050,
                 AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        this.isActive = false;
         this.input2 = new Cable();
         this.input1 = new Cable();
         this.volumeBar = volumeBar;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
+    @Override
     public void on() {
-        isActive = true;
         track.play();
-        while(isActive) {
+        while(this.isActive()) {
             double[] data1 = input1.getBuffer().poll();
             double[] data2 = input2.getBuffer().poll();
 //            if (data1 == null) {
@@ -140,25 +132,7 @@ public class AudioInterface implements Runnable {
                 }
             }
 
-
-            //track.write(input.poll(), 0, bufferSize);
-
         }
     }
 
-    public void off() {
-        isActive = false;
-    }
-
-    @Override
-    public void run() {
-        this.on();
-    }
-
-//    short[] mergeArrays(short[] first, short[] second) {
-//        short[] toReturn = new short[first.length];
-//        for (int i = 0; i < first.length; i++) {
-//            toReturn[i] = first[i] + second[i];
-//        }
-//    }
 }
