@@ -15,6 +15,7 @@ public class CableManager {
         }
         else {
             Port.link(onDeck, toLink);
+            onDeck = null;
         }
     }
 
