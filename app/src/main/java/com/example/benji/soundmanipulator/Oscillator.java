@@ -38,6 +38,11 @@ public class Oscillator extends Box {
         return this.freqMod;
     }
 
+    public void switchType() {
+        if (type == WAVETYPE.SINE) { type = WAVETYPE.SAW; }
+        else { type = WAVETYPE.SINE; }
+    }
+
 
     Oscillator(SeekBar freqBar, SeekBar volBar, SeekBar freqModAmount) {
         WaveSpecs spec = new WaveSpecs();
@@ -48,7 +53,7 @@ public class Oscillator extends Box {
                 spec.getMinimumBufferSize(), AudioTrack.MODE_STREAM);
         this.freqBar = freqBar;
         this.volBar = volBar;
-        this.type = WAVETYPE.SINE;
+        this.type = WAVETYPE.SAW;
         this.output = new Port(true);
         this.freqMod = new Port(false);
         this.freqModAmount = freqModAmount;
@@ -84,26 +89,49 @@ public class Oscillator extends Box {
     void on() {
         track.play();
         MutableDouble currentAngle = new MutableDouble(0);
-        if (this.type == WAVETYPE.SINE) {
-            while (this.isActive()) {
+
+        while (this.isActive()) {
+            if (this.type == WAVETYPE.SINE) {
                 if (output.getLink().getBuffer().isEmpty()) {
                     //short[] buffer = getSineBuffer(currentAngle);
                     output.getLink().getBuffer().offer(getSineBuffer(currentAngle));
                 }
             }
+
+            if (this.type == WAVETYPE.SAW) {
+                if (output.getLink().getBuffer().isEmpty()) {
+                    //short[] buffer = getSineBuffer(currentAngle);
+                    output.getLink().getBuffer().offer(getSawBuffer(currentAngle));
+                }
+            }
         }
+
+
     }
 
-    short[] sawCalc(int freq, double[] currentAmp, int i) {
-        freq = freqBar.getProgress();
-        double del = (2*(i%(44100/freq))/(44100/freq)-1);
-        int j = i - 1;
-        double del1 = (2*(j%(44100/freq))/(44100/freq)-1);
-        currentAmp[0] += del - del1;
-        short s = (short) (currentAmp[0] * Short.MAX_VALUE);
-        short[] mBuffer = new short[1];
-        mBuffer[0] = s;
-        return mBuffer;
+    private double[] getSawBuffer(MutableDouble currentAngle) {
+        int bufferSize = AudioTrack.getMinBufferSize(22050,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
+        //bufferSize *= 2;
+
+        double[] fmBuffer = freqMod.getLink().getBuffer().poll();
+        if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
+
+        double[] buffer = new double[bufferSize];
+        double volume = (volBar.getProgress() / 100.0);
+
+        for (int i = 0; i < bufferSize; i++) {
+            //Log.d("VALUE", String.valueOf(fmBuffer[i]));
+            buffer[i] = limit(sawCalc(currentAngle, fmBuffer[i]) * volume);
+        }
+        return buffer;
+    }
+
+    private double sawCalc(MutableDouble currentAmp, double fm) {
+        double increment = (freqBar.getProgress()+(fm*freqModAmount.getProgress())) / SAMPLE_RATE;
+        currentAmp.setValue(currentAmp.getValue() + increment);
+        currentAmp.setValue(currentAmp.getValue() % 2);
+        return (currentAmp.getValue() - 1);
     }
 
 

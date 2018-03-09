@@ -33,11 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private ListView drawer;
     private LinearLayout mainLayout;
 
-    OscillatorView oscView1;
-    OscillatorView oscView2;
-
-    AudioInterfaceView ampView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,11 +65,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        oscView1 = (OscillatorView) findViewById(R.id.osc_view1);
-        oscView2 = (OscillatorView) findViewById(R.id.osc_view2);
-
-        ampView = (AudioInterfaceView) findViewById(R.id.amp_view);
-
     } // end OnCreate
 
     private void addDrawerItems() {
@@ -92,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void addAmp() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View device = inflater.inflate(R.layout.audio_interface_view, null);
+        // final View device = inflater.inflate(R.layout.audio_interface_view, null);
+        final AudioInterfaceView device = new AudioInterfaceView(this);
         mainLayout.addView(device);
     }
 

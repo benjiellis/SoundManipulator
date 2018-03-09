@@ -7,6 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -16,38 +19,10 @@
         android:id="@+id/main_layout"
         tools:context="com.example.benji.soundmanipulator.MainActivity">
 
-        <com.example.benji.soundmanipulator.OscillatorView
-            android:id="@+id/osc_view1"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginStart="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
 
-        </com.example.benji.soundmanipulator.OscillatorView>
-
-        <com.example.benji.soundmanipulator.OscillatorView
-            android:id="@+id/osc_view2"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginStart="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/osc_view1">
-
-        </com.example.benji.soundmanipulator.OscillatorView>
-
-        <com.example.benji.soundmanipulator.AudioInterfaceView
-            android:id="@+id/amp_view"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginStart="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/osc_view2">
-
-        </com.example.benji.soundmanipulator.AudioInterfaceView>
 
     </LinearLayout>
+    </ScrollView>
 
     <ListView
         android:id="@+id/navList"
