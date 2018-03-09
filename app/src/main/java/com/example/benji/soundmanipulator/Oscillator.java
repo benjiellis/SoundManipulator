@@ -30,22 +30,6 @@ public class Oscillator extends Box {
     private Port freqMod;
     private SeekBar freqModAmount;
 
-    public void setOutputCable(Cable out) {
-        if (out.isInputTaken()) {
-            Log.d("AV", "Cable already has input assigned");
-            return;
-        }
-        this.output.setLink(out);
-    }
-
-    public void setFMCable(Cable in) {
-        if (in.isOutputTaken()) {
-            Log.d("AV", "Cable already has output assigned");
-            return;
-        }
-        this.freqMod.setLink(in);
-    }
-
     public Port getOutput() {
         return this.output;
     }
@@ -54,17 +38,6 @@ public class Oscillator extends Box {
         return this.freqMod;
     }
 
-    public void setFMCable() {
-        this.freqMod.getLink().setOutputTaken(false);
-        this.freqMod = new Port(false);
-        this.freqMod.getLink().setOutputTaken(true);
-    }
-
-    public void setOutputCable() {
-        this.output.getLink().setInputTaken(false);
-        this.output = new Port(true);
-        this.output.getLink().setInputTaken(true);
-    }
 
     Oscillator(SeekBar freqBar, SeekBar volBar, SeekBar freqModAmount) {
         WaveSpecs spec = new WaveSpecs();

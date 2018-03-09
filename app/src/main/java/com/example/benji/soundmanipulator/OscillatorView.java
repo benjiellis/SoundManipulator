@@ -146,6 +146,8 @@ public class OscillatorView extends ConstraintLayout {
 
         outputBtn.setOnClickListener(new PortOnClickListener(osc.getOutput()));
         freqBtn.setOnClickListener(new PortOnClickListener(osc.getFM()));
+        outputBtn.setOnLongClickListener(new PortOnLongClickListener(osc.getOutput()));
+        freqBtn.setOnLongClickListener(new PortOnLongClickListener(osc.getFM()));
 
     }
 }

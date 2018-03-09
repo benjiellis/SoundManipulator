@@ -15,49 +15,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AudioInterface extends Box {
 
+    public Port getInput1() {
+        return input1;
+    }
+
     private Port input1;
+
+    public Port getInput2() {
+        return input2;
+    }
+
     private Port input2;
     private AudioTrack track;
     private SeekBar volumeBar;
     private int bufferSize;
-
-    public void setInput1(Cable in) {
-        if (in.isOutputTaken()) {
-            Log.d("AV", "Cable already has output assigned");
-            return ;
-        }
-        this.input1.setLink(in);
-        this.input1.getLink().setOutputTaken(true);
-    }
-
-    public Port getInput1() {
-        return this.input1;
-    }
-
-    public Port getInput2() {
-        return this.input2;
-    }
-
-    public void setInput2(Cable in) {
-        if (in.isOutputTaken()) {
-            Log.d("AV", "Cable already has output assigned");
-            return ;
-        }
-        this.input2.setLink(in);
-        this.input2.getLink().setOutputTaken(true);
-    }
-
-    public void setInput1() {
-        this.input1.getLink().setOutputTaken(false);
-        this.input1.setLink();
-        this.input1.getLink().setOutputTaken(true);
-    }
-
-    public void setInput2() {
-        this.input2.getLink().setOutputTaken(false);
-        this.input2.setLink();
-        this.input2.getLink().setOutputTaken(true);
-    }
 
     AudioInterface(SeekBar volumeBar) {
         WaveSpecs spec = new WaveSpecs();

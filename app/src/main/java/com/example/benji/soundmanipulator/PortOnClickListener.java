@@ -17,4 +17,6 @@ public class PortOnClickListener implements View.OnClickListener {
     public void onClick(View v) {
         manager.send(onDeck);
     }
+
+
 }

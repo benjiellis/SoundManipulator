@@ -85,7 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void addOsc() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View device = inflater.inflate(R.layout.oscillator_view, null);
+        // final View device = inflater.inflate(R.layout.oscillator_view, null);
+        final OscillatorView device = new OscillatorView(this);
         mainLayout.addView(device);
     }
 
@@ -93,6 +94,11 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View device = inflater.inflate(R.layout.audio_interface_view, null);
         mainLayout.addView(device);
+    }
+
+    private void deleteView(View v) {
+        // v is the button, v.getParent is the device, button should be in device layouts
+        mainLayout.removeView((View) v.getParent());
     }
 
 } // end class MainActivity

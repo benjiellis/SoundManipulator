@@ -107,7 +107,7 @@ public class AudioInterfaceView extends ConstraintLayout {
 
         input1Btn.setOnClickListener(new PortOnClickListener(amp.getInput1()));
 
-        input1Btn.setOnClickListener(new PortOnClickListener(amp.getInput2()));
+        input2Btn.setOnClickListener(new PortOnClickListener(amp.getInput2()));
 
     }
 }
