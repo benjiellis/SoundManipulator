@@ -21,19 +21,19 @@ public class AudioInterfaceView extends ConstraintLayout {
         this.power = power;
     }
 
-    public Button getInput1Btn() {
+    public PortButton getInput1Btn() {
         return input1Btn;
     }
 
-    public void setInput1Btn(Button input1Btn) {
+    public void setInput1Btn(PortButton input1Btn) {
         this.input1Btn = input1Btn;
     }
 
-    public Button getInput2Btn() {
+    public PortButton getInput2Btn() {
         return input2Btn;
     }
 
-    public void setInput2Btn(Button input2Btn) {
+    public void setInput2Btn(PortButton input2Btn) {
         this.input2Btn = input2Btn;
     }
 
@@ -54,8 +54,8 @@ public class AudioInterfaceView extends ConstraintLayout {
     }
 
     private Switch power;
-    private Button input1Btn;
-    private Button input2Btn;
+    private PortButton input1Btn;
+    private PortButton input2Btn;
     private SeekBar volumeBar;
 
     private AudioInterface amp;
@@ -84,8 +84,8 @@ public class AudioInterfaceView extends ConstraintLayout {
         inflate(context, R.layout.audio_interface_view, this);
         this.power = (Switch) findViewById(R.id.power);
         this.volumeBar = (SeekBar) findViewById(R.id.volume);
-        this.input1Btn = (Button) findViewById(R.id.input1_btn);
-        this.input2Btn = (Button) findViewById(R.id.input2_btn);
+        this.input1Btn = (PortButton) findViewById(R.id.input1_btn);
+        this.input2Btn = (PortButton) findViewById(R.id.input2_btn);
 
         amp = new AudioInterface(volumeBar);
 
@@ -105,9 +105,11 @@ public class AudioInterfaceView extends ConstraintLayout {
             }
         });
 
-        input1Btn.setOnClickListener(new PortOnClickListener(amp.getInput1()));
+        input1Btn.setPort(amp.getInput1());
+        input2Btn.setPort(amp.getInput2());
+        input1Btn.setOnClickListener(new PortOnClickListener(amp.getInput1(), input1Btn));
 
-        input2Btn.setOnClickListener(new PortOnClickListener(amp.getInput2()));
+        input2Btn.setOnClickListener(new PortOnClickListener(amp.getInput2(), input2Btn));
 
     }
 }

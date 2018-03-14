@@ -61,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
                         toast = Toast.makeText(MainActivity.this, "Adding Oscillator", Toast.LENGTH_SHORT);
                         toast.show();
                         break;
+                    case 2:
+                        // add adsr to view
+                        addADSR();
+                        toast = Toast.makeText(MainActivity.this, "Adding ADSR", Toast.LENGTH_SHORT);
+                        toast.show();
+                        break;
                 }
             }
         });
@@ -68,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     } // end OnCreate
 
     private void addDrawerItems() {
-        String[] osArray = { "Audio Interface", "Oscillator" };
+        String[] osArray = { "Audio Interface", "Oscillator", "ADSR" };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         drawer.setAdapter(adapter);
     }
@@ -84,6 +90,13 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         // final View device = inflater.inflate(R.layout.audio_interface_view, null);
         final AudioInterfaceView device = new AudioInterfaceView(this);
+        mainLayout.addView(device);
+    }
+
+    private void addADSR() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        // final View device = inflater.inflate(R.layout.audio_interface_view, null);
+        final ADSRView device = new ADSRView(this);
         mainLayout.addView(device);
     }
 

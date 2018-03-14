@@ -18,35 +18,41 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.example.benji.soundmanipulator.PortButton
+        class="com.example.benji.soundmanipulator.PortButton"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/output_btn"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="O"
+        android:background="@drawable/port_circle"
         app:layout_constraintStart_toEndOf="@+id/power"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.example.benji.soundmanipulator.PortButton
+        class="com.example.benji.soundmanipulator.PortButton"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/freq_btn"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="F"
+        android:background="@drawable/port_circle"
         app:layout_constraintStart_toEndOf="@+id/output_btn"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.example.benji.soundmanipulator.PortButton xmlns:android="http://schemas.android.com/apk/res/android"
+        class="com.example.benji.soundmanipulator.PortButton"
         android:id="@+id/volt_btn"
-        android:layout_width="37dp"
-        android:layout_height="37dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="V"
+        android:background="@drawable/port_circle"
         app:layout_constraintStart_toEndOf="@+id/freq_btn"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="5dp"/>
 
     <Switch
         android:id="@+id/type"

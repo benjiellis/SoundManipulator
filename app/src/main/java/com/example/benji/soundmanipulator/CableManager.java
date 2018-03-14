@@ -8,18 +8,24 @@ import android.widget.Toast;
 public class CableManager {
     private static CableManager instance;
     private Port onDeck;
+    private PortOnClickListener onDeckListener;
 
     private CableManager() {
+        this.onDeckListener = null;
         this.onDeck = null;
     }
 
-    public void send(Port toLink) {
+    public PortOnClickListener send(Port toLink, PortOnClickListener listener) {
         if (onDeck == null) {
             onDeck = toLink;
+            onDeckListener = listener;
+            return null;
         }
         else if (onDeck == toLink) {
             Log.d("AV", "Cannot link port with self");
             onDeck = null;
+            onDeckListener = null;
+            return null;
         }
         else {
             onDeck.getLink().detach();
@@ -29,6 +35,9 @@ public class CableManager {
 
             Port.link(onDeck, toLink);
             onDeck = null;
+            PortOnClickListener toReturn = onDeckListener;
+            onDeckListener = null;
+            return toReturn;
         }
     }
 

@@ -17,24 +17,24 @@ public class OscillatorView extends ConstraintLayout {
         this.power = power;
     }
 
-    public Button getOutputBtn() {
+    public PortButton getOutputBtn() {
         return outputBtn;
     }
-    public void setOutputBtn(Button outputBtn) {
+    public void setOutputBtn(PortButton outputBtn) {
         this.outputBtn = outputBtn;
     }
 
-    public Button getFreqBtn() {
+    public PortButton getFreqBtn() {
         return freqBtn;
     }
-    public void setFreqBtn(Button freqBtn) {
+    public void setFreqBtn(PortButton freqBtn) {
         this.freqBtn = freqBtn;
     }
 
-    public Button getVolt() {
+    public PortButton getVolt() {
         return volt;
     }
-    public void setVolt(Button volt) {
+    public void setVolt(PortButton volt) {
         this.volt = volt;
     }
 
@@ -81,9 +81,9 @@ public class OscillatorView extends ConstraintLayout {
     }
 
     private Switch power;
-    private Button outputBtn;
-    private Button freqBtn;
-    private Button volt;
+    private PortButton outputBtn;
+    private PortButton freqBtn;
+    private PortButton volt;
     private SeekBar volume;
     private SeekBar frequency;
     private SeekBar freqMod;
@@ -117,9 +117,9 @@ public class OscillatorView extends ConstraintLayout {
 
         // wrap up
         power = (Switch) findViewById(R.id.power);
-        outputBtn = (Button) findViewById(R.id.output_btn);
-        freqBtn = (Button) findViewById(R.id.freq_btn);
-        volt = (Button) findViewById(R.id.volt_btn);
+        outputBtn = (PortButton) findViewById(R.id.output_btn);
+        freqBtn = (PortButton) findViewById(R.id.freq_btn);
+        volt = (PortButton) findViewById(R.id.volt_btn);
         volume = (SeekBar) findViewById(R.id.volume_bar);
         frequency = (SeekBar) findViewById(R.id.freq_bar);
         freqMod = (SeekBar) findViewById(R.id.freq_mod_bar);
@@ -154,11 +154,12 @@ public class OscillatorView extends ConstraintLayout {
         });
 
 
-
-        outputBtn.setOnClickListener(new PortOnClickListener(osc.getOutput()));
-        freqBtn.setOnClickListener(new PortOnClickListener(osc.getFM()));
-        outputBtn.setOnLongClickListener(new PortOnLongClickListener(osc.getOutput()));
-        freqBtn.setOnLongClickListener(new PortOnLongClickListener(osc.getFM()));
+        outputBtn.setPort(osc.getOutput());
+        freqBtn.setPort(osc.getFM());
+        volt.setPort(osc.getVolt());
+        outputBtn.setOnClickListener(new PortOnClickListener(osc.getOutput(), outputBtn));
+        freqBtn.setOnClickListener(new PortOnClickListener(osc.getFM(), freqBtn));
+        volt.setOnClickListener(new PortOnClickListener(osc.getVolt(), volt));
 
     }
 }

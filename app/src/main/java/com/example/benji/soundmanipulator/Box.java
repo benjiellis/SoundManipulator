@@ -1,12 +1,25 @@
 package com.example.benji.soundmanipulator;
 
 
+import android.media.AudioFormat;
+import android.media.AudioTrack;
+
 public abstract class Box implements Runnable {
     private boolean isActive;
 
+    public int getMinBufferSize() {
+        return minBufferSize;
+    }
+
+    private int minBufferSize;
+
     Box() {
+        this.minBufferSize = AudioTrack.getMinBufferSize(22050,
+                AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         this.isActive = false;
     }
+
+
 
     public boolean isActive() { return isActive; }
 

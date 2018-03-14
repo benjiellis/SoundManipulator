@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/back">
+
+
+    <Switch
+        android:id="@+id/power"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Power  "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/trigger"
+        android:layout_width="60dp"
+        android:layout_height="38dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Trig"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/power" />
+
+    <SeekBar
+        android:id="@+id/attack"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:max="3000"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/power"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/decay"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:max="3000"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/attack"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/sustain"
+        android:layout_width="120dp"
+        android:max="100"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/power"
+        app:layout_constraintTop_toBottomOf="@+id/attack" />
+
+    <SeekBar
+        android:id="@+id/release"
+        android:layout_width="120dp"
+        android:max="3000"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toEndOf="@+id/sustain"
+        app:layout_constraintTop_toBottomOf="@+id/decay" />
+
+    <com.example.benji.soundmanipulator.PortButton xmlns:android="http://schemas.android.com/apk/res/android"
+        class="com.example.benji.soundmanipulator.PortButton"
+        android:id="@+id/output"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/port_circle"
+        app:layout_constraintStart_toEndOf="@+id/trigger"
+        app:layout_constraintTop_toBottomOf="@+id/power"
+        android:elevation="5dp"/>
+
+</android.support.constraint.ConstraintLayout>

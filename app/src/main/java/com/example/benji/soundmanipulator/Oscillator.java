@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.SeekBar;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -28,6 +29,7 @@ public class Oscillator extends Box {
     private WAVETYPE type;
     private Port output;
     private Port freqMod;
+    private Port volt;
     private SeekBar freqModAmount;
 
     public Port getOutput() {
@@ -37,6 +39,8 @@ public class Oscillator extends Box {
     public Port getFM() {
         return this.freqMod;
     }
+
+    public Port getVolt() { return this.volt; }
 
     public void switchType() {
         if (type == WAVETYPE.SINE) { type = WAVETYPE.SAW; }
@@ -56,6 +60,7 @@ public class Oscillator extends Box {
         this.type = WAVETYPE.SAW;
         this.output = new Port(true);
         this.freqMod = new Port(false);
+        this.volt = new Port(false);
         this.freqModAmount = freqModAmount;
     }
 
@@ -75,12 +80,18 @@ public class Oscillator extends Box {
         double[] fmBuffer = freqMod.getLink().getBuffer().poll();
         if (fmBuffer == null) {fmBuffer = new double[bufferSize];}
 
+        double[] voltBuffer = volt.getLink().getBuffer().poll();
+        if (voltBuffer == null) {
+            voltBuffer = new double[getMinBufferSize()];
+            Arrays.fill(voltBuffer, 1);
+        }
+
         double[] buffer = new double[bufferSize];
         double volume = (volBar.getProgress() / 100.0);
 
         for (int i = 0; i < bufferSize; i++) {
             //Log.d("VALUE", String.valueOf(fmBuffer[i]));
-            buffer[i] = limit(sineCalc(currentAngle, fmBuffer[i]) * volume);
+            buffer[i] = limit(sineCalc(currentAngle, fmBuffer[i]) * volume) * voltBuffer[i];
         }
         return buffer;
     }
@@ -120,9 +131,15 @@ public class Oscillator extends Box {
         double[] buffer = new double[bufferSize];
         double volume = (volBar.getProgress() / 100.0);
 
+        double[] voltBuffer = volt.getLink().getBuffer().poll();
+        if (voltBuffer == null) {
+            voltBuffer = new double[getMinBufferSize()];
+            Arrays.fill(voltBuffer, 1);
+        }
+
         for (int i = 0; i < bufferSize; i++) {
             //Log.d("VALUE", String.valueOf(fmBuffer[i]));
-            buffer[i] = limit(sawCalc(currentAngle, fmBuffer[i]) * volume);
+            buffer[i] = limit(sawCalc(currentAngle, fmBuffer[i]) * volume) * voltBuffer[i];
         }
         return buffer;
     }
