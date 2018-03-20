@@ -11,6 +11,8 @@ public abstract class Box implements Runnable {
         return minBufferSize;
     }
 
+    public int getSampleRate() { return 22050; }
+
     private int minBufferSize;
 
     Box() {
